@@ -5,9 +5,10 @@
         Choose file
     </button>
 
-
     <span class="file-name" [hidden]="!file">
         {{ file?.name }}
+        <br/>
+        <progress [hidden]="uploadProgress === 0" [value]="uploadProgress ?? 0" max="100"></progress>
     </span>
 
     <button type="button" class="btn-secondary" (click)="submit()" [disabled]="!file">

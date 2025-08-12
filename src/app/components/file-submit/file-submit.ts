@@ -31,13 +31,17 @@ export class FileSubmit {
 
         const upload$ = this.http.post('/api/file/upload', form, { reportProgress: true, observe: 'events' })
         
-        this.uploadSub = upload$.subscribe( event =>{
-            if (event.type == HttpEventType.UploadProgress && event.total) {
-                this.uploadProgress = Math.round(100 * (event.loaded / event.total))
-              }
-            else if (event.type === HttpEventType.Response) {
-                this.uploadProgress = 100;
-            }
+        this.uploadSub = upload$.subscribe({
+            next: event =>{
+                if (event.type == HttpEventType.UploadProgress && event.total) {
+                    this.uploadProgress = Math.round(100 * (event.loaded / event.total))
+                }
+            },
+            complete: () => { 
+                this.uploadProgress = 100
+                this.uploadSub = null
+            },
+            error: () => this.reset()
         })
 
     }
