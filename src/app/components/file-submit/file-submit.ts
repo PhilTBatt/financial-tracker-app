@@ -1,4 +1,6 @@
-import { Component } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Component, inject } from "@angular/core";
+import { finalize } from "rxjs";
 
 @Component({
     selector: 'file-submit',
@@ -8,14 +10,23 @@ import { Component } from "@angular/core";
 })
 
 export class FileSubmit {
+    private http = inject(HttpClient);
     file: File | null = null;
+    formData: FormData | null = null;
 
     onFileChange(files: FileList | null) {
     this.file = files?.[0] ?? null
-    console.log('picked file:', this.file)
     }
 
     submit() {
-        console.log('Submitting files:', this.file)
+        if (!this.file) {
+            console.log('No file selected')
+            return
+        }
+
+        const form = new FormData()
+        form.append('file', this.file)
+
+        const upload$ = this.http.post('/api/file/upload', form, { reportProgress: true, observe: 'events' })
     }
 }
