@@ -1,5 +1,5 @@
 <section>
-    <input #picker type="file" class="file-input" (change)="onFileChange(picker.files)" requiredFileType="qid">
+    <input #picker type="file" class="file-input" (change)="onFileChange(picker.files)" accept=".qid">
 
     <button type="button" class="btn" (click)="picker.click()">
         Choose file

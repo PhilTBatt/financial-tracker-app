@@ -6,7 +6,7 @@ section {
 
 .file-uploader { 
     display: flex; 
-    gap: .5rem
+    gap: .5em
 }
 
 .file-input { 
@@ -14,15 +14,16 @@ section {
 }
 
 .btn, .btn-secondary {
-    margin: .2rem;
-    padding: .4rem .6rem; 
-    border-radius: .5rem; 
+    margin: .2em;
+    padding: .4em .6em; 
+    border-radius: .5em; 
 }
 
 .file-name {
     opacity: .85;
-    max-width: 10rem;
+    max-width: 10em;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    margin: 0 0.25em
 }

@@ -13,7 +13,7 @@ export class FileSubmit {
     private http = inject(HttpClient)
     file: File | null = null
     formData: FormData | null = null
-    uploadProgress: number | null = 0
+    uploadProgress: number = 0
     uploadSub: Subscription | null = null
 
     onFileChange(files: FileList | null) {
@@ -52,7 +52,7 @@ export class FileSubmit {
     }
 
       reset() {
-        this.uploadProgress = null;
+        this.uploadProgress = 0;
         this.uploadSub = null;
     }
 }
