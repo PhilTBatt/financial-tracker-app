@@ -15,6 +15,7 @@ export class FileSubmit {
     formData: FormData | null = null
     uploadProgress: number | null = null
     uploadSub: Subscription | null = null
+    errorMsg: string | null = null
 
     onFileChange(files: FileList | null) {
         this.file = files?.[0] ?? null
@@ -43,7 +44,10 @@ export class FileSubmit {
                 this.uploadProgress = 100
                 this.uploadSub = null
             },
-            error: () => this.reset()
+            error: () => {
+                this.errorMsg = 'Upload failed'
+                this.reset()
+            }
         })
 
     }
@@ -53,7 +57,7 @@ export class FileSubmit {
         this.reset()
     }
 
-      reset() {
+    reset() {
         this.uploadProgress = null;
         this.uploadSub = null;
     }

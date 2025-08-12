@@ -17,4 +17,10 @@
     <button type="button" class="btn-secondary" (click)="cancelUpload()" [hidden]="!uploadSub">
         Cancel
     </button>
+    <span [hidden]="uploadProgress !== 100">
+        Uploaded ✓
+    </span>
+    <p class="error" [hidden]="!errorMsg">
+        {{ errorMsg }}
+    </p>
 </section>

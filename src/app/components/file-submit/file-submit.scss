@@ -16,7 +16,9 @@ section {
 .btn, .btn-secondary {
     margin: .2em;
     padding: .4em .6em; 
-    border-radius: .5em; 
+    border-radius: .5em;
+    background-color: #c29fe0
+    
 }
 
 .file-name {
@@ -25,5 +27,10 @@ section {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    margin: 0 0.25em
+    margin: 0 0.25em;
+}
+
+.error { 
+    color: #c00;
+    margin: 0 0.25em;
 }
