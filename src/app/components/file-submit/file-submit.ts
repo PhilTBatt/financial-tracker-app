@@ -13,11 +13,11 @@ export class FileSubmit {
     private http = inject(HttpClient)
     file: File | null = null
     formData: FormData | null = null
-    uploadProgress: number = 0
+    uploadProgress: number | null = null
     uploadSub: Subscription | null = null
 
     onFileChange(files: FileList | null) {
-    this.file = files?.[0] ?? null
+        this.file = files?.[0] ?? null
     }
 
     submit() {
@@ -25,6 +25,8 @@ export class FileSubmit {
             console.log('No file selected')
             return
         }
+
+        this.uploadProgress = 0
 
         const form = new FormData()
         form.append('file', this.file)
@@ -52,7 +54,7 @@ export class FileSubmit {
     }
 
       reset() {
-        this.uploadProgress = 0;
+        this.uploadProgress = null;
         this.uploadSub = null;
     }
 }
