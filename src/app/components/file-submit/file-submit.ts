@@ -8,7 +8,14 @@ import { Component } from "@angular/core";
 })
 
 export class FileSubmit {
+    file: File | null = null;
+
+    onFileChange(files: FileList | null) {
+    this.file = files?.[0] ?? null
+    console.log('picked file:', this.file)
+    }
+
     submit() {
-        console.log('File Submitted')
+        console.log('Submitting files:', this.file)
     }
 }

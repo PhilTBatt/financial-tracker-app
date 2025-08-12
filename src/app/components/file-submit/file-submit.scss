@@ -1,0 +1,28 @@
+section {
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+}
+
+.file-uploader { 
+    display: flex; 
+    gap: .5rem
+}
+
+.file-input { 
+    display: none
+}
+
+.btn, .btn-secondary {
+    margin: .2rem;
+    padding: .4rem .6rem; 
+    border-radius: .5rem; 
+}
+
+.file-name {
+    opacity: .85;
+    max-width: 10rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
