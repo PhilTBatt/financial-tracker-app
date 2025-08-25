@@ -1,8 +1,11 @@
-h1 {
-    font-size: 6vw;
-    color: #CBA9E9;
-    border: 1px solid #a684c4;
-    border-radius: 10px;
-    padding: 0.25vh 1vw 0.25vh 1vw;
-    margin: 1vh 0.25vw 2vh 0.25vw;
+:host(.header) h1 {
+    font-size: 4vw;
+    margin: 2vh 2vw;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+
+    @media (max-width: 768px) {
+        font-size: 12vw;
+        margin: 2vh 2vw;
+        margin: 1vh 2vw;
+    }
 }

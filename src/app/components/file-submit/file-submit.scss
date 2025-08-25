@@ -1,14 +1,3 @@
-section {
-    display: flex;
-    align-items: center; 
-    justify-content: center;
-}
-
-.file-uploader { 
-    display: flex; 
-    gap: .5em
-}
-
 .file-input { 
     display: none
 }
@@ -17,17 +6,36 @@ section {
     margin: .2em;
     padding: .4em .6em; 
     border-radius: .5em;
-    background-color: #c29fe0
-    
+    background-color: #c29fe0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    font-size: 2vw;
+
+    @media (max-width: 768px) {
+        font-size: 5vw;
+    }
+}
+
+.btn, .btn-secondary:hover {
+    background-color: whitesmoke;
+    color: #c29fe0
 }
 
 .file-name {
+    display: inline-block;
     opacity: .85;
-    max-width: 10em;
+    max-width: 20vw;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     margin: 0 0.25em;
+    justify-items: end;
+    font-size: 2vw;
+
+
+    @media (max-width: 768px) {
+        max-width: 37.5vw;
+        font-size: 6vw;
+    }
 }
 
 .error { 

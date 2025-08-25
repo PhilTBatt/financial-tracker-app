@@ -1,10 +1,11 @@
 import { HttpClient, HttpEventType } from "@angular/common/http";
 import { Component, inject } from "@angular/core";
-import { finalize, Subscription } from "rxjs";
+import { Subscription } from "rxjs";
+import { StyledCard } from "../styled-card/styled-card";
 
 @Component({
     selector: 'file-submit',
-    imports: [],
+    imports: [StyledCard],
     templateUrl: './file-submit.html',
     styleUrl: './file-submit.scss'
 })
@@ -22,8 +23,8 @@ export class FileSubmit {
     }
 
     submit() {
-        if (!this.file) {
-            console.log('No file selected')
+        if (!this.file || !this.file.name.endsWith('.qif')) {
+            this.errorMsg = `Pick a .qif file`
             return
         }
 

@@ -1,4 +1,4 @@
-<section>
+<styled-card>
     <input #picker type="file" class="file-input" (change)="onFileChange(picker.files)" accept=".qif" [disabled]="uploadSub !== null">
 
     <button type="button" class="btn" (click)="picker.click()">
@@ -23,4 +23,4 @@
     <p class="error" [hidden]="!errorMsg">
         {{ errorMsg }}
     </p>
-</section>
+</styled-card>
