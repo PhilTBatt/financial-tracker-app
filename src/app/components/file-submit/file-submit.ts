@@ -33,7 +33,7 @@ export class FileSubmit {
         const form = new FormData()
         form.append('file', this.file)
 
-        const upload$ = this.http.post('/api/file/upload', form, { reportProgress: true, observe: 'events' })
+        const upload$ = this.http.post('http://localhost:8080/api/file/upload', form, { reportProgress: true, observe: 'events' })
         
         this.uploadSub = upload$.subscribe({
             next: event =>{
@@ -45,7 +45,8 @@ export class FileSubmit {
                 this.uploadProgress = 100
                 this.uploadSub = null
             },
-            error: () => {
+            error: (err) => {
+                console.log(err)
                 this.errorMsg = 'Upload failed'
                 this.reset()
             }
