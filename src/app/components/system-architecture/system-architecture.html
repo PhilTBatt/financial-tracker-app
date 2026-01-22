@@ -7,9 +7,13 @@
     </p>
     
     <styled-card class="diagram">
-        @for (step of steps; track step) {
+        @for (step of steps; track step.key) {
             <div class="diagram-node">
-                <p class="node-label">{{ step }}</p>
+                <div class="node-icon" [ngClass]="'icon-' + step.key">
+                    <img class="node-svg" [src]="step.icon" alt="" [ngClass]="'icon-' + step.key" />
+                </div>
+
+                <p class="node-label">{{ step.label }}</p>
             </div>
         }
     </styled-card>
