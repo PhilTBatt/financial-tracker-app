@@ -1,0 +1,16 @@
+<section class="system-architecture">
+    <h1 class="heading">
+        System Archetecture
+    </h1>
+    <p class="heading-text">
+        End-to-end data flow visualization
+    </p>
+    
+    <styled-card class="diagram">
+        @for (step of steps; track step) {
+            <div class="diagram-node">
+                <p class="node-label">{{ step }}</p>
+            </div>
+        }
+    </styled-card>
+</section>
