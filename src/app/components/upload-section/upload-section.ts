@@ -8,6 +8,6 @@ import { StyledCard } from "../styled-card/styled-card";
     styleUrl: './upload-section.scss'
 })
 
-export class Diagram {
+export class UploadSection {
     
 }

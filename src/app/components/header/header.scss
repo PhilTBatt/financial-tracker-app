@@ -1,11 +1,32 @@
-:host(.header) h1 {
-    font-size: 4vw;
-    margin: 2vh 2vw;
-    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+.header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-    @media (max-width: 768px) {
-        font-size: 12vw;
-        margin: 2vh 2vw;
-        margin: 1vh 2vw;
-    }
+.header-inner {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 30px 15px 30px;
+}
+
+.title {
+    color: rgb(255, 255, 255);
+    margin: 0;
+    font-size: 28px;
+}
+
+.secondary-text {
+    color: rgb(25, 127, 230);
+}
+
+.action-button {
+    padding: 10px 20px;
+    color: rgb(255, 255, 255);
+    background-color: rgb(25, 127, 230);
+    border-color: rgb(255, 255, 255);
+    border-width: 1px;
+    border-radius: 10px;
+    font-weight: 700;
 }
