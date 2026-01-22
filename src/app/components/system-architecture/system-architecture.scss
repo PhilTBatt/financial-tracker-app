@@ -39,11 +39,11 @@
 }
 
 .node-icon {
+    position: relative;
     width: 80px;
     height: 80px;
     display: grid;
     place-items: center;
-
 }
 
 .node-svg {
@@ -51,10 +51,15 @@
     height: 45px;
     display: block;
     padding: 10px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: color-mix(in srgb, var(--accent) 14%, rgba(255, 255, 255, 0.06));
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, rgba(255, 255, 255, 0.12));
     box-shadow: 0 10px 22px rgba(0, 0, 0, 0.2);
     border-radius: 14px;
+}
+
+.node-svg:hover {
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 25%, transparent);
 }
 
 .icon-angular { --accent: rgb(221, 0, 49) } 
@@ -63,15 +68,6 @@
 .icon-lambda  { --accent: rgb(237, 113, 0) } 
 .icon-ddb     { --accent: rgb(201, 37, 209) } 
 .icon-update  { --accent: rgb(250, 204, 21) }
-
-.node-icon .node-svg {
-    background: color-mix(in srgb, var(--accent) 14%, rgba(255, 255, 255, 0.06));
-    border: 1px solid color-mix(in srgb, var(--accent) 40%, rgba(255, 255, 255, 0.12));
-}
-
-.node-icon {
-    position: relative;
-}
 
 .diagram-node:not(:last-child) .node-icon::after {
     content: "";

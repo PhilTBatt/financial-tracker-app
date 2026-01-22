@@ -2,43 +2,45 @@
     display: none
 }
 
-.btn, .btn-secondary {
-    margin: .2em;
-    padding: .4em .6em; 
-    border-radius: .5em;
-    background-color: #c29fe0;
+.buttons-div {
+    display: flex;
+    gap: 20px;
+}
+
+.button {
+    box-sizing: border-box;
+    padding: 13px 25px 8px 25px; 
+    border-radius: 12px;
+    background-color: rgb(25, 127, 230);
+    border: 1px solid rgb(52, 135, 217);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    font-size: 2vw;
-
-    @media (max-width: 768px) {
-        font-size: 5vw;
-    }
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
 }
 
-.btn, .btn-secondary:hover {
-    background-color: whitesmoke;
-    color: #c29fe0
+.example-button {
+    background-color: rgb(32, 40, 59);
+    border: 1px solid rgb(59, 68, 88);
 }
 
-.file-name {
-    display: inline-block;
-    opacity: .85;
-    max-width: 20vw;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    margin: 0 0.25em;
-    justify-items: end;
-    font-size: 2vw;
-
-
-    @media (max-width: 768px) {
-        max-width: 37.5vw;
-        font-size: 6vw;
-    }
+.button:hover {
+    background-color: rgb(15, 23, 42);
+    cursor: pointer;
 }
 
-.error { 
+.example-button:hover {
+    background-color: rgb(15, 23, 42);
+    cursor: pointer;
+}
+
+.error {
+    display: hidden;
     color: #c00;
     margin: 0 0.25em;
+}
+
+svg {
+    vertical-align: middle;
+    margin: 0 5px 5px 0;
 }

@@ -1,26 +1,17 @@
-<styled-card>
-    <input #picker type="file" class="file-input" (change)="onFileChange(picker.files)" accept=".qif" [disabled]="uploadSub !== null">
+<div class="buttons-div">
+    <input #picker type="file" class="file-input" accept=".qif" (change)="submit(picker.files)" [disabled]="uploadSub !== null">
 
-    <button type="button" class="btn" (click)="picker.click()">
-        Choose file
+    <button type="button" class="button" (click)="picker.click()" [disabled]="uploadSub !== null">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-up-icon lucide-file-up"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 12v6"/><path d="m15 15-3-3-3 3"/></svg>
+        Upload .QIF File
     </button>
 
-    <span class="file-name" [hidden]="!file">
-        {{ file?.name }}
-        <br/>
-        <progress [hidden]="uploadProgress === null" [value]="uploadProgress ?? 0" max="100"></progress>
-    </span>
-
-    <button type="button" class="btn-secondary" (click)="submit()" [disabled]="!file" [hidden]="uploadSub !== null">
-        Submit
+    <button type="button" class="button example-button" (click)="showExampleData()">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M280-280h160v-160H280v160Zm240 0h160v-160H520v160ZM280-520h160v-160H280v160Zm240 0h160v-160H520v160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>
+        Show Example Data
     </button>
-    <button type="button" class="btn-secondary" (click)="cancelUpload()" [hidden]="!uploadSub">
-        Cancel
-    </button>
-    <span [hidden]="uploadProgress !== 100">
-        Uploaded ✓
-    </span>
-    <p class="error" [hidden]="!errorMsg">
-        {{ errorMsg }}
-    </p>
-</styled-card>
+    
+    @if (errorMsg; as msg) {
+        <p class="error">{{ msg }}</p>
+    }
+</div>

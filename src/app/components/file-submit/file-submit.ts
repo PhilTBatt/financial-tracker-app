@@ -1,11 +1,10 @@
 import { HttpClient, HttpEventType } from "@angular/common/http";
 import { Component, inject } from "@angular/core";
 import { Subscription } from "rxjs";
-import { StyledCard } from "../styled-card/styled-card";
 
 @Component({
     selector: 'file-submit',
-    imports: [StyledCard],
+    imports: [],
     templateUrl: './file-submit.html',
     styleUrl: './file-submit.scss'
 })
@@ -18,11 +17,10 @@ export class FileSubmit {
     uploadSub: Subscription | null = null
     errorMsg: string | null = null
 
-    onFileChange(files: FileList | null) {
+    submit(files: FileList | null, input?: HTMLInputElement) {
+        this.errorMsg = null
         this.file = files?.[0] ?? null
-    }
-
-    submit() {
+        
         if (!this.file || !this.file.name.endsWith('.qif')) {
             this.errorMsg = `Pick a .qif file`
             return
@@ -60,7 +58,11 @@ export class FileSubmit {
     }
 
     reset() {
+        this.file = null;
         this.uploadProgress = null;
         this.uploadSub = null;
+    }
+
+    showExampleData() {
     }
 }

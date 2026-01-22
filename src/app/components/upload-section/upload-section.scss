@@ -1,0 +1,21 @@
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    margin: 0 0 50px 0;
+}
+
+.heading {
+    color: white;
+    margin: 0;
+    font-size: 22px;
+}
+
+.text {
+    color: rgb(171, 185, 216);
+    margin: 0 0 14px 0;
+    width: 450px;
+    text-align: center;
+}

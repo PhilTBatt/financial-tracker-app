@@ -8,13 +8,13 @@
     box-sizing: border-box;
     justify-content: space-between;
     align-items: center;
-    padding: 7px 30px 15px 30px;
+    padding: 6px 30px 12px 30px;
 }
 
 .title {
     color: rgb(255, 255, 255);
-    margin: 0;
-    font-size: 28px;
+    margin: 0 0 0 0;
+    font-size: 24px;
 }
 
 .secondary-text {
@@ -23,7 +23,7 @@
 
 .button {
     text-decoration: none;
-    padding: 8px 22px 10px 20px;
+    padding: 7px 22px 10px 20px;
     color: rgb(255, 255, 255);
     background-color: rgb(25, 127, 230);
     border-color: rgb(255, 255, 255);
@@ -33,9 +33,21 @@
     font-size: 15px;
 }
 
+.button:hover {
+    background-color: rgb(23, 120, 216);
+}
+
 
 .button-icon {
     font-family: monospace;
     margin-right: 5px;
     font-size: 16px;
+}
+
+svg {
+    vertical-align: middle;
+    padding: 4px;
+    margin: 0px 5px 5px 0;
+    background-color: rgb(23, 120, 216);
+    border-radius: 5px;
 }
