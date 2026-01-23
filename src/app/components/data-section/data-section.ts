@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
-import { StyledCard } from "../styled-card/styled-card";
 import { HttpClient } from "@angular/common/http";
+import { StyledCard } from "../styled-card/styled-card";
 
 export interface TransactionItem {
   date: string;
