@@ -1,5 +1,5 @@
-import { HttpClient, HttpEventType } from "@angular/common/http";
-import { Component, inject } from "@angular/core";
+import { HttpClient, HttpEventType, HttpResponse } from "@angular/common/http";
+import { Component, EventEmitter, inject, Output } from "@angular/core";
 import { Subscription } from "rxjs";
 
 @Component({
@@ -16,6 +16,8 @@ export class FileSubmit {
     uploadProgress: number | null = null
     uploadSub: Subscription | null = null
     errorMsg: string | null = null
+    @Output() uploaded = new EventEmitter<string>()
+    exampleId = '1a5fc7be-aed1-4c96-893c-ec3a4cb7697c'
 
     submit(files: FileList | null, input?: HTMLInputElement) {
         this.errorMsg = null
@@ -34,19 +36,27 @@ export class FileSubmit {
         const upload$ = this.http.post('http://localhost:8080/api/upload', form, { reportProgress: true, observe: 'events' })
         
         this.uploadSub = upload$.subscribe({
-            next: event =>{
+            next: event => {
                 if (event.type == HttpEventType.UploadProgress && event.total) {
                     this.uploadProgress = Math.round(100 * (event.loaded / event.total))
                 }
+
+                if (event instanceof HttpResponse) {
+                    const body = event.body;
+                    if (body && typeof body === "object" && "id" in body) {
+                        const id = body.id as string;
+                        this.uploaded.emit(id)
+                    }
+                }
+            },
+            error: err => {
+                console.log(err)
+                this.errorMsg = 'Upload failed'
+                this.reset()
             },
             complete: () => { 
                 this.uploadProgress = 100
                 this.uploadSub = null
-            },
-            error: (err) => {
-                console.log(err)
-                this.errorMsg = 'Upload failed'
-                this.reset()
             }
         })
 
@@ -64,5 +74,6 @@ export class FileSubmit {
     }
 
     showExampleData() {
+        this.uploaded.emit(this.exampleId)
     }
 }

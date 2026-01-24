@@ -1,14 +1,13 @@
-import { Component } from "@angular/core";
-import { StyledCard } from "../styled-card/styled-card";
+import { Component, EventEmitter, Output } from "@angular/core";
 import { FileSubmit } from "../file-submit/file-submit";
 
 @Component({
     selector: 'upload-section',
-    imports: [StyledCard, FileSubmit],
+    imports: [FileSubmit],
     templateUrl: './upload-section.html',
     styleUrl: './upload-section.scss'
 })
 
 export class UploadSection {
-    
+    @Output() uploaded = new EventEmitter<string>()
 }

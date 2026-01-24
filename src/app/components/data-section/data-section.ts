@@ -1,19 +1,7 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { StyledCard } from "../styled-card/styled-card";
-
-export interface TransactionItem {
-  date: string;
-  amount: number;
-  memo: string;
-  payee: string;
-}
-
-export interface TransactionList {
-  id: string;
-  transactions: TransactionItem[];
-  createdAt: string;
-}
+import { Metrics, Transaction, TransactionRecord } from "../../types/data-types";
 
 @Component({
     selector: 'data-section',
@@ -22,31 +10,30 @@ export interface TransactionList {
     styleUrl: './data-section.scss'
 })
 
-export class DataSection implements OnInit {
-    transactions: TransactionItem[] = []
-    listId: string | null = null
-    createdAt: string | null = null
-
+export class DataSection {
+    metrics: Metrics | null = null;
+    transactions: Transaction[] = [];
+    recordId: string | null = null;
+    createdAt: string | null = null;
     private readonly apiUrl = 'http://localhost:8080/api/transactions'
-    private readonly listIdToFetch = 'default'
 
     constructor(private http: HttpClient) {}
 
-    ngOnInit(): void {
-        this.loadTransactions()
-    }
-
-    private loadTransactions(): void {
-        this.http.get<TransactionList>(`${this.apiUrl}/${this.listIdToFetch}`).subscribe({
-        next: (data) => {
-            this.listId = data.id
-            this.createdAt = data.createdAt
-            this.transactions = data.transactions ?? []
-        },
-        error: (err) => {
-            console.error('Failed to load transactions', err)
-            this.transactions = []
-        }
+    public loadRecord(id: string) {
+        this.http.get<TransactionRecord>(`${this.apiUrl}/${id}`).subscribe({
+            next: data => {
+                this.recordId = data.id
+                this.createdAt = data.createdAt
+                this.metrics = data.metrics
+                this.transactions = data.transactions
+            },
+            error: err => {
+                console.error('Failed to load transactions', err)
+                this.recordId = null
+                this.metrics = null
+                this.transactions = []
+                this.createdAt = null
+            }
         })
     }
 }

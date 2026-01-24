@@ -115,7 +115,7 @@
 <main class="main">
     <app-system-architecture/>
 
-    <upload-section/>
+    <upload-section (uploaded)="loadRecord($event)"/>
 
     <data-section/>
 </main>

@@ -6,5 +6,5 @@
         Upload your financial export or use our generated demo environment to explore the dashboard.
     </p>
 
-    <file-submit/>
+    <file-submit (uploaded)="uploaded.emit($event)"/>
 </section>
