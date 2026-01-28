@@ -10,11 +10,13 @@
                 Average Monthly Spend
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-icon lucide-calendar"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
             </p>
-
             <p class="value" class="small-card-text">
                 @let avg = metrics?.avgMonthlySpend;
 
                 {{avg != null ? '£' + (avg / 100) : ''}}
+                <span class="monthly-spend-side-text">
+                    {{metrics?.dateRangeLabel}}
+                </span>
             </p>
         </styled-card>
         <styled-card class="small-card">
@@ -35,6 +37,9 @@
 
             <p class="value" class="small-card-text">
                 {{metrics?.topCategory}}
+                <span class="monthly-spend-side-text">
+                    £{{(metrics?.topCategorySpent ?? 0) / 100}}
+                </span>
             </p>
         </styled-card>
     </div>
@@ -42,10 +47,10 @@
     <div class="big-cards">
         <styled-card class="big-card">
             <p class="big-card-heading">
-                Bank Balance Over Time
+                Monthly Spend Over Time
             </p>
-            <div>
-                Chart
+            <div class="line-chart">
+                @defer{<canvas baseChart [type]="lineType" [data]="lineData" [options]="lineOptions"></canvas>}
             </div>
         </styled-card>
 
@@ -53,8 +58,8 @@
             <p class="big-card-heading">
                 Category Distribution
             </p>
-            <div>
-                Chart
+            <div class="donut-chart">
+                @defer{<canvas baseChart [type]="donutType" [data]="donutData" [options]="donutOptions"></canvas>}
             </div>
         </styled-card>
     </div>

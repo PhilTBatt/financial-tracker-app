@@ -17,7 +17,7 @@ export class FileSubmit {
     uploadSub: Subscription | null = null
     errorMsg: string | null = null
     @Output() uploaded = new EventEmitter<string>()
-    exampleId = '1a5fc7be-aed1-4c96-893c-ec3a4cb7697c'
+    exampleId = '947d9fc6-88ea-484f-8b0b-872f2e6aca48'
 
     submit(files: FileList | null, input?: HTMLInputElement) {
         this.errorMsg = null

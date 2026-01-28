@@ -10,7 +10,8 @@ export interface Metrics {
     topCategory: string | null;
     topCategorySpent: number;
     dateRangeLabel: string | null;
-    monthlySpendHistory: SpendPoint[]
+    monthlySpendHistory: SpendPoint[];
+    categorySpendTotals: Record<string, number>
 }
 
 export interface Transaction {
