@@ -16,6 +16,7 @@ export class App {
   protected readonly title = signal('financial-tracker-app')
   @ViewChild(DataSection) dataSection!: DataSection
   diagramUploadStep = 0
+  showData = false
 
   loadRecord(id: string) { this.dataSection.loadRecord(id) }
 
@@ -24,4 +25,6 @@ export class App {
     const delays = [0, 750, 1500, 2250, 3000, 3750]
     delays.forEach((ms, i) => setTimeout(() => this.diagramUploadStep = i + 1, ms))
   }
+
+  onDataLoaded() { this.showData = true }
 }

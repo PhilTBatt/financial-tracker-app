@@ -113,11 +113,11 @@
 <app-header/>
 
 <main class="main">
-    <app-system-architecture [diagramUploadStep]="diagramUploadStep"/>
+  <app-system-architecture [diagramUploadStep]="diagramUploadStep"/>
 
-    <upload-section (uploaded)="loadRecord($event)" (uploadStarted)="startUploadAnimation()"/>
+  <upload-section (uploaded)="loadRecord($event)" (uploadStarted)="startUploadAnimation()"/>
 
-    <data-section/>
+  <data-section [class.hidden]="!showData" (dataLoaded)="onDataLoaded()"/>
 </main>
 
 <router-outlet />

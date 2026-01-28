@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, EventEmitter, Output } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { StyledCard } from "../styled-card/styled-card";
 import { Metrics, Transaction, TransactionRecord } from "../../types/data-types";
@@ -18,7 +18,8 @@ export class DataSection {
     recordId: string | null = null
     createdAt: string | null = null
     private readonly apiUrl = 'http://localhost:8080/api/transactions'
-    private loadAttempts = 0;
+    private loadAttempts = 0
+    @Output() dataLoaded = new EventEmitter<void>()
 
     lineType: 'line' = 'line'
     lineData: ChartConfiguration<"line">["data"] = { labels: [], datasets: [] }
@@ -50,11 +51,19 @@ export class DataSection {
                 this.loadAttempts = 0
                 this.buildMonthlyLine()
                 this.buildDonutChart()
+                console.log('DataSection: about to emit loaded')
+                console.log(
+  'DataSection: observers:',
+  (this.dataLoaded as any).observers?.length,
+  'observed:',
+  (this.dataLoaded as any).observed
+);
+                this.dataLoaded.emit()
             },
             error: err => {
                 if (err?.status === 404 && this.loadAttempts < 2) {
                     this.loadAttempts += 1
-                    setTimeout(() => this.loadRecord(id), 5000)
+                    setTimeout(() => this.loadRecord(id), 4000)
                     return
                 }
                 this.recordId = null
