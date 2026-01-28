@@ -33,7 +33,7 @@ export class DataSection {
     donutType: "doughnut" = "doughnut"
     donutData: ChartConfiguration<"doughnut">["data"] = { labels: [], datasets: [] }
     donutOptions: ChartConfiguration<'doughnut'>['options'] = { 
-        plugins: { legend: { position: 'right', labels: { padding: 19, boxWidth: 12 } } },
+        plugins: { legend: { position: 'right', labels: { padding: 8, boxWidth: 10, boxHeight: 10 } } },
         layout: { padding: {  right: 0 } },
         maintainAspectRatio: false,
         cutout: '65%'
@@ -51,13 +51,6 @@ export class DataSection {
                 this.loadAttempts = 0
                 this.buildMonthlyLine()
                 this.buildDonutChart()
-                console.log('DataSection: about to emit loaded')
-                console.log(
-  'DataSection: observers:',
-  (this.dataLoaded as any).observers?.length,
-  'observed:',
-  (this.dataLoaded as any).observed
-);
                 this.dataLoaded.emit()
             },
             error: err => {

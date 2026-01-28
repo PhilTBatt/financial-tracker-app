@@ -1,6 +1,6 @@
 import { HttpClient, HttpEventType, HttpResponse } from "@angular/common/http";
 import { Component, EventEmitter, inject, Output } from "@angular/core";
-import { Subscription } from "rxjs";
+import { firstValueFrom, Subscription } from "rxjs";
 
 @Component({
     selector: 'file-submit',
@@ -43,7 +43,7 @@ export class FileSubmit {
                 }
 
                 if (event instanceof HttpResponse) {
-                    const body = event.body;
+                    const body = event.body
                     if (body && typeof body === "object" && "id" in body) {
                         const id = body.id as string
                         this.uploadStarted.emit()
@@ -75,7 +75,51 @@ export class FileSubmit {
         this.uploadSub = null;
     }
 
-    showExampleData() {
-        this.uploaded.emit(this.exampleId)
+    async showExampleData() {
+        if (this.uploadSub) return
+        
+        try {
+            this.errorMsg = null
+            
+            const blob = await firstValueFrom( this.http.get('/example.qif', { responseType: 'blob' }) )
+            const file = new File([blob], 'example.qif', { type: 'application/octet-stream' })
+            this.file = file
+
+            this.uploadProgress = 0
+
+            const form = new FormData()
+            form.append('file', this.file)
+
+            const upload$ = this.http.post('http://localhost:8080/api/upload', form, { reportProgress: true, observe: 'events' })
+            
+            this.uploadSub = upload$.subscribe({
+                next: event => {
+                    if (event.type == HttpEventType.UploadProgress && event.total) {
+                        this.uploadProgress = Math.round(100 * (event.loaded / event.total))
+                    }
+
+                    if (event instanceof HttpResponse) {
+                        const body = event.body
+                        if (body && typeof body === "object" && "id" in body) {
+                            const id = body.id as string
+                            this.uploadStarted.emit()
+                            this.uploaded.emit(id)
+                        }
+                    }
+                },
+                error: err => {
+                    console.log(err)
+                    this.errorMsg = 'Example Upload failed'
+                    this.reset()
+                },
+                complete: () => { 
+                    this.uploadProgress = 100
+                    this.uploadSub = null
+                }
+            })
+        } catch (e) {
+            this.errorMsg = 'Could not load example.qif';
+            this.reset()
+        }
     }
 }
