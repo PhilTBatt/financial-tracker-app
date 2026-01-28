@@ -16,10 +16,11 @@ export class FileSubmit {
     uploadProgress: number | null = null
     uploadSub: Subscription | null = null
     errorMsg: string | null = null
-    @Output() uploaded = new EventEmitter<string>()
     exampleId = '947d9fc6-88ea-484f-8b0b-872f2e6aca48'
+    @Output() uploaded = new EventEmitter<string>()
+    @Output() uploadStarted = new EventEmitter<void>()
 
-    submit(files: FileList | null, input?: HTMLInputElement) {
+    submit(files: FileList | null) {
         this.errorMsg = null
         this.file = files?.[0] ?? null
         
@@ -44,7 +45,8 @@ export class FileSubmit {
                 if (event instanceof HttpResponse) {
                     const body = event.body;
                     if (body && typeof body === "object" && "id" in body) {
-                        const id = body.id as string;
+                        const id = body.id as string
+                        this.uploadStarted.emit()
                         this.uploaded.emit(id)
                     }
                 }

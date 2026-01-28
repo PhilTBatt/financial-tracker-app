@@ -10,4 +10,5 @@ import { FileSubmit } from "../file-submit/file-submit";
 
 export class UploadSection {
     @Output() uploaded = new EventEmitter<string>()
+    @Output() uploadStarted = new EventEmitter<void>()
 }

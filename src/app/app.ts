@@ -7,7 +7,7 @@ import { SystemArchitecture } from "./components/system-architecture/system-arch
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, SystemArchitecture, DataSection, UploadSection, SystemArchitecture],
+  imports: [RouterOutlet, Header, SystemArchitecture, DataSection, UploadSection],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
@@ -15,6 +15,13 @@ import { SystemArchitecture } from "./components/system-architecture/system-arch
 export class App {
   protected readonly title = signal('financial-tracker-app')
   @ViewChild(DataSection) dataSection!: DataSection
+  diagramUploadStep = 0
 
   loadRecord(id: string) { this.dataSection.loadRecord(id) }
+
+  startUploadAnimation() {
+    this.diagramUploadStep = 0
+    const delays = [0, 750, 1500, 2250, 3000, 3750]
+    delays.forEach((ms, i) => setTimeout(() => this.diagramUploadStep = i + 1, ms))
+  }
 }

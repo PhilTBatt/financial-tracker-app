@@ -113,9 +113,9 @@
 <app-header/>
 
 <main class="main">
-    <app-system-architecture/>
+    <app-system-architecture [diagramUploadStep]="diagramUploadStep"/>
 
-    <upload-section (uploaded)="loadRecord($event)"/>
+    <upload-section (uploaded)="loadRecord($event)" (uploadStarted)="startUploadAnimation()"/>
 
     <data-section/>
 </main>

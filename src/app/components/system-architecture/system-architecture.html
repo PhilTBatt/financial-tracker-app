@@ -7,8 +7,8 @@
     </p>
     
     <styled-card class="diagram">
-        @for (step of steps; track step.key) {
-            <div class="diagram-node">
+        @for (step of steps; track step.key; let i = $index) {
+            <div class="diagram-node" [class.active]="diagramUploadStep >= i + 1">
                 <div class="node-icon" [ngClass]="'icon-' + step.key">
                     <img class="node-svg" [src]="step.icon" alt="" [ngClass]="'icon-' + step.key" />
                 </div>

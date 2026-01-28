@@ -93,8 +93,24 @@
 }
 
 .diagram-node:first-child .node-icon::after {
-  left: calc(100% + 23px);
+    left: calc(100% + 23px);
 }
 .diagram-node:first-child .node-icon::before {
-  left: calc(100% + 85px);
+    left: calc(100% + 85px);
+}
+
+.diagram-node.active .node-svg {
+    box-shadow:
+        0 10px 22px rgba(0, 0, 0, 0.2),
+        0 0 18px color-mix(in srgb, var(--accent) 40%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 70%, rgba(255, 255, 255, 0.12));
+}
+
+.diagram-node.active:not(:last-child) .node-icon::after {
+    background: color-mix(in srgb, var(--accent) 55%, rgba(255, 255, 255, 0.22));
+}
+
+.diagram-node.active:not(:last-child) .node-icon::before {
+    border-right-color: color-mix(in srgb, var(--accent) 55%, rgba(255, 255, 255, 0.22));
+    border-top-color:  color-mix(in srgb, var(--accent) 55%, rgba(255, 255, 255, 0.22));
 }

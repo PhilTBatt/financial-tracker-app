@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { StyledCard } from '../styled-card/styled-card';
 import { NgClass } from '@angular/common';
 
@@ -16,6 +16,8 @@ export class SystemArchitecture {
     { key: 's3',      label: 'AWS S3',           icon: 'assets/diagram/s3.svg' },
     { key: 'lambda',  label: 'PYTHON LAMBDA',    icon: 'assets/diagram/lambda.svg' },
     { key: 'ddb',     label: 'DYNAMODB',         icon: 'assets/diagram/dynamodb.svg' },
-    { key: 'update',  label: 'API & UI UPDATE',  icon: 'assets/diagram/update.svg' },
+    { key: 'update',  label: 'API & UI UPDATE',  icon: 'assets/diagram/update.svg' }
     ]
+
+  @Input() diagramUploadStep = 0
 }
