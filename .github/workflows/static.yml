@@ -41,7 +41,7 @@ jobs:
       - name: Install deps
         run: npm ci
       - name: Build Angular
-        run: npx ng build --configuration production
+        run: npx ng build --configuration production --base-href "/financial-tracker-app/"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
