@@ -17,7 +17,7 @@ export class DataSection {
     transactions: Transaction[] = []
     recordId: string | null = null
     createdAt: string | null = null
-    private readonly apiUrl = 'http://localhost:8080/api/transactions'
+    private readonly apiUrl = 'https://financial-tracker-api-6yq1.onrender.com/api/transactions'
     private loadAttempts = 0
     @Output() dataLoaded = new EventEmitter<void>()
 

@@ -34,7 +34,7 @@ export class FileSubmit {
         const form = new FormData()
         form.append('file', this.file)
 
-        const upload$ = this.http.post('http://localhost:8080/api/upload', form, { reportProgress: true, observe: 'events' })
+        const upload$ = this.http.post('https://financial-tracker-api-6yq1.onrender.com/api/upload', form, { reportProgress: true, observe: 'events' })
         
         this.uploadSub = upload$.subscribe({
             next: event => {
@@ -81,7 +81,7 @@ export class FileSubmit {
         try {
             this.errorMsg = null
             
-            const blob = await firstValueFrom( this.http.get('/example.qif', { responseType: 'blob' }) )
+            const blob = await firstValueFrom( this.http.get('example.qif', { responseType: 'blob' }) )
             const file = new File([blob], 'example.qif', { type: 'application/octet-stream' })
             this.file = file
 
@@ -90,7 +90,7 @@ export class FileSubmit {
             const form = new FormData()
             form.append('file', this.file)
 
-            const upload$ = this.http.post('http://localhost:8080/api/upload', form, { reportProgress: true, observe: 'events' })
+            const upload$ = this.http.post('https://financial-tracker-api-6yq1.onrender.com/api/upload', form, { reportProgress: true, observe: 'events' })
             
             this.uploadSub = upload$.subscribe({
                 next: event => {
