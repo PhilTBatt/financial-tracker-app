@@ -1,13 +1,19 @@
-# [Financial Tracker](https://philtbatt.github.io/financial-tracker-app)
+# Financial Tracker
+
+Live App: https://philtbatt.github.io/financial-tracker-app
 
 This is the frontend for my **Financial Tracker** application.
-It allows users to upload transaction files and view the processed data.
+It allows users to upload transaction files and view processed data.
 
 This frontend is part of a full-stack application, alongside:
 - a [Java Spring Boot API](https://github.com/PhilTBatt/financial-tracker-api)
 - a [Python AWS Lambda function](https://github.com/PhilTBatt/financial-tracker-api-lambda-layer)
 
 ---
+
+| Home Section | Data Section |
+|---|---|
+| ![Home](./screenshots/home-page.png) | ![Info](./screenshots/data-section.png) |
 
 ## Tech Stack
 
