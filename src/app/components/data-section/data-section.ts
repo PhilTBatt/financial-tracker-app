@@ -54,9 +54,9 @@ export class DataSection {
                 this.dataLoaded.emit()
             },
             error: err => {
-                if (err?.status === 404 && this.loadAttempts < 2) {
+                if (err?.status === 404 && this.loadAttempts < 4) {
                     this.loadAttempts += 1
-                    setTimeout(() => this.loadRecord(id), 4000)
+                    setTimeout(() => this.loadRecord(id), 4500)
                     return
                 }
                 this.recordId = null
