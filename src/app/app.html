@@ -1,5 +1,8 @@
 <style>
   :host {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     --bright-blue: oklch(51.01% 0.274 263.83);
     --electric-violet: oklch(53.18% 0.28 296.97);
     --french-violet: oklch(47.66% 0.246 305.88);
@@ -108,6 +111,7 @@
       margin-block: 1.5rem;
     }
   }
+  .main{ flex: 1; }
 </style>
 
 <app-header/>
@@ -121,3 +125,5 @@
 </main>
 
 <router-outlet />
+
+<app-footer/>

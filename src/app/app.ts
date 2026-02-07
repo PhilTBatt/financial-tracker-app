@@ -4,10 +4,11 @@ import { Header } from './components/header/header';
 import { DataSection } from './components/data-section/data-section';
 import { UploadSection } from './components/upload-section/upload-section';
 import { SystemArchitecture } from "./components/system-architecture/system-architecture";
+import { Footer } from './footer/footer';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, SystemArchitecture, DataSection, UploadSection],
+  imports: [RouterOutlet, Header, SystemArchitecture, DataSection, UploadSection, Footer],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
