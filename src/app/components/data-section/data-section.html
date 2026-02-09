@@ -36,31 +36,74 @@
             </p>
 
             <p class="value" class="small-card-text">
-                {{metrics?.topCategory}}
+                  @let top = (metrics?.categories?.outTotalByCategory | keyvalue:descValue)?.[0];
+                {{ top?.key }}
                 <span class="monthly-spend-side-text">
-                    £{{(metrics?.topCategorySpent ?? 0) / 100}} Total
+                    £{{ (top?.value ?? 0) / 100 }} Total
                 </span>
             </p>
         </styled-card>
     </div>
 
-    <div class="big-cards">
-        <styled-card class="big-card">
-            <p class="big-card-heading">
-                Monthly Spend Over Time
-            </p>
-            <div class="line-chart">
-                @defer{<canvas baseChart [type]="lineType" [data]="lineData" [options]="lineOptions"></canvas>}
-            </div>
-        </styled-card>
+    <div class="big-cards-section">
+        <div class="big-cards">
+            <styled-card class="big-card">
+                <p class="big-card-heading">
+                    Monthly Spend Over Time
+                </p>
+                <div class="chart montlhy-spend-chart">
+                    @defer{<canvas baseChart [type]="lineType" [data]="lineData" [options]="lineOptions"></canvas>}
+                </div>
+            </styled-card>
 
-        <styled-card class="big-card">
-            <p class="big-card-heading">
-                Category Distribution
-            </p>
-            <div class="donut-chart">
-                @defer{<canvas baseChart [type]="donutType" [data]="donutData" [options]="donutOptions"></canvas>}
-            </div>
-        </styled-card>
+            <styled-card class="big-card">
+                <p class="big-card-heading">
+                    Monthly Spend/Income
+                </p>
+                <div class="chart in-out-chart">
+                    @defer{<canvas baseChart [type]="inOutType" [data]="inOutData" [options]="inOutOptions"></canvas>}
+                </div>
+            </styled-card>
+        </div>
+
+        <div class="big-cards">
+            <styled-card class="big-card">
+                <p class="big-card-heading">
+                    Category Distribution
+                </p>
+                <div class="chart donut-chart">
+                    @defer{<canvas baseChart [type]="donutType" [data]="donutData" [options]="donutOptions"></canvas>}
+                </div>
+            </styled-card>
+
+            <styled-card class="big-card">
+                <p class="big-card-heading">
+                    Monthly Spend Per Category
+                </p>
+                <div class="chart monthy-cat-spend-chart">
+                    @defer{<canvas baseChart [type]="catStackType" [data]="catStackData" [options]="catStackOptions"></canvas>}
+                </div>
+            </styled-card>
+        </div>
+
+        <div class="big-cards">
+            <styled-card class="big-card">
+                <p class="big-card-heading">
+                    Average Weekly Spend
+                </p>
+                <div class="chart weekly-spend-chart">
+                    @defer{<canvas baseChart [type]="weekdayType" [data]="weekdayData" [options]="weekdayOptions"></canvas>}
+                </div>
+            </styled-card>
+
+            <styled-card class="big-card">
+                <p class="big-card-heading">
+                    Spending By Transaction Size
+                </p>
+                <div class="chart transaction-size-chart">
+                    @defer{<canvas baseChart [type]="sizeType" [data]="sizeData" [options]="sizeOptions"></canvas>}
+                </div>
+            </styled-card>
+        </div>
     </div>
 </section>
