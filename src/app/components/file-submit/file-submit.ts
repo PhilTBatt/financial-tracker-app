@@ -79,7 +79,7 @@ export class FileSubmit {
     async showExampleData() {
         if (this.uploadSub) return
 
-        if (!environment.production) return this.uploaded.emit('e5917b93-bee2-4571-ac7b-b168fb8d5b39')
+        if (!environment.production) return this.uploaded.emit('b72327ef-7b78-481c-bbaf-6c0b1e8988da')
         
         try {
             this.errorMsg = null

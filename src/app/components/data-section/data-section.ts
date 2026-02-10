@@ -3,8 +3,12 @@ import { HttpClient } from "@angular/common/http";
 import { StyledCard } from "../styled-card/styled-card";
 import { Metrics, Transaction, TransactionRecord } from "../../types/data-types";
 import { BaseChartDirective } from 'ng2-charts';
-import { ChartConfiguration } from "chart.js";
+import { ChartConfiguration, ScriptableContext } from "chart.js";
 import { KeyValuePipe } from "@angular/common";
+import { Inject, PLATFORM_ID, OnInit } from "@angular/core";
+import { isPlatformBrowser } from "@angular/common";
+import { Chart } from "chart.js";
+
 
 @Component({
     selector: 'data-section',
@@ -13,7 +17,8 @@ import { KeyValuePipe } from "@angular/common";
     styleUrl: './data-section.scss'
 })
 
-export class DataSection {
+export class DataSection implements OnInit {
+    private zoomRegistered = false
     metrics: Metrics | null = null
     transactions: Transaction[] = []
     recordId: string | null = null
@@ -77,15 +82,6 @@ export class DataSection {
         maintainAspectRatio: false
     }
 
-    donutType: "doughnut" = "doughnut"
-    donutData: ChartConfiguration<"doughnut">["data"] = { labels: [], datasets: [] }
-    donutOptions: ChartConfiguration<'doughnut'>['options'] = { 
-        plugins: { legend: { position: 'right', labels: { padding: 8, boxWidth: 10, boxHeight: 10, color: this.theme.text } } },
-        layout: { padding: {  right: 0 } },
-        maintainAspectRatio: false,
-        cutout: '65%'
-    }
-
     inOutType: "bar" = "bar"
     inOutData: ChartConfiguration<"bar">["data"] = { labels: [], datasets: [] }
     inOutOptions: ChartConfiguration<"bar">["options"] = {
@@ -98,6 +94,35 @@ export class DataSection {
         }
     }
 
+    donutType: "doughnut" = "doughnut"
+    donutData: ChartConfiguration<"doughnut">["data"] = { labels: [], datasets: [] }
+    donutOptions: ChartConfiguration<'doughnut'>['options'] = { 
+        plugins: { legend: { position: 'right', labels: { padding: 8, boxWidth: 10, boxHeight: 10, color: this.theme.text } } },
+        layout: { padding: {  right: 0 } },
+        maintainAspectRatio: false,
+        cutout: '65%'
+    }
+
+    bubbleType: 'bubble' = 'bubble';
+    bubbleData: ChartConfiguration<'bubble'>['data'] = { datasets: [] }
+    bubbleOptions: ChartConfiguration<'bubble'>['options'] = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: { label: (ctx) => {
+                    const raw = ctx.raw as any;
+                    return `${raw._cat}: count ${raw.x}, avg £${raw.y.toFixed(2)}, total £${raw._total.toFixed(2)}`;
+                }}
+            }
+        },
+        scales: {
+            x: { title: { display: true, text: 'Outgoing transaction count' }, ticks: { color: this.theme.text }, grid: { color: this.theme.grid } },
+            y: { title: { display: true, text: 'Avg outgoing transaction (£)' }, ticks: { color: this.theme.text }, grid: { color: this.theme.grid } }
+        }
+    }
+
     catStackType: "bar" = "bar"
     catStackData: ChartConfiguration<"bar">["data"] = { labels: [], datasets: [] }
     catStackOptions: ChartConfiguration<"bar">["options"] = {
@@ -107,7 +132,7 @@ export class DataSection {
         scales: {  
             x: { stacked: true, ticks: { maxTicksLimit: 6 } }, 
             y: { stacked: true, ticks: { maxTicksLimit: 6 }, grid: { color: this.theme.grid } }
-        },
+        }
     }
 
     weekdayType: "bar" = "bar";
@@ -128,7 +153,89 @@ export class DataSection {
         scales: { x: {}, y: { ticks: { maxTicksLimit: 6 }, grid: { color: this.theme.grid } } },
     }
 
-    constructor(private http: HttpClient) {}
+
+    rollingType: "line" = "line";
+    rollingData: ChartConfiguration<"line">["data"] = { labels: [], datasets: [] }
+    rollingOptions: ChartConfiguration<'line'>['options'] = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { x: { ticks: { maxTicksLimit: 8 } }, y: { ticks: { maxTicksLimit: 6 } } }
+    }
+
+
+    scatterType: "scatter" = "scatter";
+    scatterData: ChartConfiguration<"scatter">["data"] = { datasets: [] }
+    scatterOptions: ChartConfiguration<'scatter'>['options'] = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    label: (ctx) => {
+                        const p = ctx.raw as any
+                        const val = Number(p.y)
+                        const sign = val < 0 ? '-' : '';
+                        return `${sign}£${Math.abs(val).toFixed(2)} — ${p._d ?? ''}`
+                    }
+                }
+            }
+        },
+        scales: {
+            x: { type: 'time', time: { unit: 'day' }, ticks: { maxTicksLimit: 8 } },
+            y: { ticks: { maxTicksLimit: 6 } }
+        }
+    }
+
+    matrixType: "matrix" = "matrix"
+    matrixData: ChartConfiguration<"matrix">["data"] = { datasets: [] }
+    matrixOptions: ChartConfiguration<'matrix'>['options'] = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    title: (items) => {
+                        const raw = items[0]?.raw as any
+                        return raw?._label ?? ''
+                    },
+                    label: (ctx) => {
+                        const raw = ctx.raw as any
+                        const v = Number(raw?.v ?? 0)
+                        return `£${v.toFixed(2)}`
+                    }
+                }
+            }
+        },
+        scales: {
+            x: { type: 'linear', min: -0.5, max: 11.5, grid: { display: false },
+                ticks: { 
+                    stepSize: 1, 
+                    color: this.theme.text,
+                    callback: v => ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"][Number(v)] ?? "" } },
+            y: { type: 'linear', offset: true, grid: { display: false },
+                ticks: { stepSize: 1, callback: v => String(Math.trunc(Number(v))) }
+            }
+        }
+    }
+
+    constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object) {}
+
+    async ngOnInit() {
+        await this.registerChartPluginsClientOnly()
+    }
+
+    private async registerChartPluginsClientOnly() {
+        if (!isPlatformBrowser(this.platformId)) return
+
+        if (!this.zoomRegistered) {
+            const zoom = await import("chartjs-plugin-zoom")
+            Chart.register(zoom.default)
+            this.zoomRegistered = true
+        }
+    }
 
     public loadRecord(id: string) {
         this.http.get<TransactionRecord>(`${this.apiUrl}/${id}`).subscribe({
@@ -144,6 +251,10 @@ export class DataSection {
                 this.buildMonthlyCategoriesSpendChart()
                 this.buildSpendingByWeekdayChart()
                 this.buildSpendingBySizeChart()
+                this.buildCategoryBubbleChart()
+                this.buildRollingLine()
+                this.buildInOutScatter()
+                this.buildMonthlySpendMatrix()
                 this.dataLoaded.emit()
             },
             error: err => {
@@ -222,7 +333,59 @@ export class DataSection {
 
         this.donutData = {
             labels,
-            datasets: [{ data: values, backgroundColor: colors, borderWidth: 1, borderColor: "rgba(15,23,42,0.85)" }]
+            datasets: [{ data: values, backgroundColor: colors, borderWidth: 0.5, borderColor: "rgba(15,23,42,0.85)" }]
+        }
+    }
+
+    private buildCategoryBubbleChart() {
+        const cats = this.metrics?.categories
+        if (!cats) {
+            this.bubbleData = { datasets: [] }
+            return
+        }
+
+        const totals = cats.outTotalByCategory ?? {}
+        const counts = cats.outCountByCategory ?? {}
+        const avgs = cats.avgOutByCategory ?? {}
+
+        const entries = Object.keys(totals)
+            .map(cat => ({
+                cat,
+                totalPennies: Number(totals[cat] ?? 0),
+                count: Number(counts[cat] ?? 0),
+                avgPennies: Number(avgs[cat] ?? 0)
+            }))
+            .filter(x => x.totalPennies > 0 && x.count > 0)
+
+        if (!entries.length) {
+            this.bubbleData = { datasets: [] }
+            return
+        }
+
+        const maxTotalPounds = Math.max(...entries.map(e => e.totalPennies / 100))
+
+        const radiusFromTotal = (totalPounds: number) => {
+            const norm = maxTotalPounds ? totalPounds / maxTotalPounds : 0
+            return 6 + 18 * Math.sqrt(norm);
+        }
+
+        this.bubbleData = {
+            datasets: [{
+                label: "Categories",
+                data: entries.map(e => {
+                    const totalPounds = e.totalPennies / 100
+                    return {
+                        x: e.count,
+                        y: e.avgPennies / 100,
+                        r: radiusFromTotal(totalPounds),
+                        _cat: e.cat,
+                        _total: totalPounds
+                    }
+                }),
+                backgroundColor: entries.map(e => this.categoryColors[e.cat] ?? this.theme.text),
+                borderColor: "rgba(15,23,42,0.85)",
+                borderWidth: 1
+            }]
         }
     }
 
@@ -253,7 +416,7 @@ export class DataSection {
                 label: cat,
                 data: (byCat[cat] ?? []).map(p => (Number(p) || 0) / 100),
                 backgroundColor: this.categoryColors[cat] ?? this.theme.text,
-                borderRadius: 0
+                borderWidth: 0.5
             }))
         }
     }
@@ -300,10 +463,151 @@ export class DataSection {
             this.sizeGradient[Math.min(i, this.sizeGradient.length - 1)]
         )
 
-
         this.sizeData = {
             labels,
             datasets: [{ data: counts, backgroundColor: colors, borderRadius: 6, borderWidth: 0 }]
         }
     }
+
+    private buildRollingLine() {
+        const labels = this.metrics?.daily?.labels ?? []
+        const rollingPennies = this.metrics?.rollingOut7d?.values ?? []
+        
+        if (!labels.length || !rollingPennies.length) {
+            this.rollingData = { labels: [], datasets: [] }
+            return
+        }
+        this.rollingData = {
+            labels: labels,
+            datasets: [ {
+                label: 'Rolling 7-day avg (£)',
+                data: rollingPennies.map(v => (Number(v) || 0) / 100),
+                tension: 0.35,
+                pointRadius: 0,
+                borderColor: this.theme.spend,
+                backgroundColor: "rgba(245,158,11,0.18)",
+                fill: true,
+            } ]
+        }
+    }
+
+    private buildInOutScatter() {
+        const txs = this.transactions ?? []
+        if (!txs.length) {
+            this.scatterData = { datasets: [] }
+            return
+        }
+
+        const points = txs.filter(t => !!t.date && typeof t.amount === 'number')
+            .map(t => ({
+                x: new Date(t.date).getTime(),
+                y: t.amount / 100,
+                _d: t.description
+            }))
+        
+        this.scatterData = {
+            datasets: [ {
+                label: 'Transactions',
+                data: points,
+                parsing: false,
+                pointRadius: 3,
+                backgroundColor: "rgba(148,163,184,0.55)"
+            } ]
+        }
+    }
+
+    private buildMonthlySpendMatrix() {
+        const daily = this.metrics?.daily
+        if (!daily?.labels?.length || !daily?.out?.length) {
+            this.matrixData = { datasets: [] }
+            return
+        }
+
+        type Cell = { x: number; y: number; v: number; d: string }
+
+        const lastLabel = String(daily.labels[daily.labels.length - 1] ?? "")
+        const lastDate = new Date(lastLabel)
+        if (Number.isNaN(lastDate.getTime())) {
+            this.matrixData = { datasets: [] }
+            return
+        }
+
+        const year = lastDate.getFullYear()
+        const month = lastDate.getMonth()
+
+        const firstOfMonth = new Date(year, month, 1)
+        const daysInMonth = new Date(year, month + 1, 0).getDate()
+
+        const jsDayFirst = firstOfMonth.getDay()
+        const firstWeekdayMon0 = (jsDayFirst + 6) % 7
+        const rows = Math.ceil((firstWeekdayMon0 + daysInMonth) / 7)
+
+        const outByDate = new Map<string, number>()
+        for (let i = 0; i < daily.labels.length; i++) {
+            const d = String(daily.labels[i] ?? "")
+            const outPennies = Number(daily.out[i] ?? 0)
+            outByDate.set(d, outPennies / 100)
+        }
+
+        const cells: Cell[] = []
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dt = new Date(year, month, day)
+            const iso = dt.toISOString().slice(0, 10)
+            const v = Number(outByDate.get(iso) ?? 0)
+
+            const jsDay = dt.getDay()
+            const weekdayMon0 = (jsDay + 6) % 7
+
+            const indexFromGridStart = firstWeekdayMon0 + (day - 1)
+            const weekRow = Math.floor(indexFromGridStart / 7)
+
+            cells.push({ x: weekdayMon0, y: weekRow, v, d: iso })
+        }
+
+        const maxV = Math.max(...cells.map(p => p.v))
+
+        this.matrixOptions = {
+            ...this.matrixOptions,
+            scales: {
+                ...this.matrixOptions?.scales,
+                y: {
+                    type: "linear",
+                    min: -0.5,
+                    max: (rows - 1) + 0.5,
+                    grid: { display: false },
+                    ticks: { display: false }
+                }
+            }
+        }
+
+        this.matrixData = {
+            datasets: [
+            {
+                label: "Monthly spend (£)",
+                data: cells,
+                parsing: false,
+                borderWidth: 1,
+                borderColor: "rgba(15,23,42,0.85)",
+                backgroundColor: (ctx) => {
+                    const raw = ctx.raw
+                    if (!raw || typeof raw !== "object") return "rgba(148,163,184,0.10)"
+                    const r = raw as { v?: number }
+                    const v = Number(r.v ?? 0)
+                    if (!maxV || v <= 0) return "rgba(148,163,184,0.10)"
+                    const t = Math.min(1, Math.max(0, v / maxV))
+                    const a = 0.12 + 0.78 * Math.sqrt(t)
+                    return `rgba(245,158,11,${a})`
+                },
+                width: (ctx) => {
+                    const area = ctx.chart.chartArea
+                    return area ? Math.floor(area.width / 7) - 2 : 20
+                },
+                height: (ctx) => {
+                    const area = ctx.chart.chartArea
+                    return area ? Math.max(10, Math.floor(area.height / rows) - 2) : 14
+                }
+            } ]
+        }
+    }
+
 }

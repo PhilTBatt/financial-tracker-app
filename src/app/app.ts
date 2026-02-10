@@ -4,7 +4,9 @@ import { Header } from './components/header/header';
 import { DataSection } from './components/data-section/data-section';
 import { UploadSection } from './components/upload-section/upload-section';
 import { SystemArchitecture } from "./components/system-architecture/system-architecture";
-import { Footer } from './footer/footer';
+import { Footer } from './components/footer/footer';
+import 'chartjs-adapter-date-fns';
+import './chart.config'
 
 @Component({
   selector: 'app-root',

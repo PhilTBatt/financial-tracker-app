@@ -33,15 +33,15 @@ export interface Categories {
 export interface Metrics {
   totalTransactions: number
   dateRangeLabel: string | null
-
   avgMonthlySpend?: number
   avgWeeklySpend?: number
-
   monthly: PeriodSeries
   weekly: PeriodSeries
-
   categories: Categories
   buckets: Buckets
+  daily?: DailySeries
+  rollingOut7d?: RollingSeries
+  topOutgoingTransactions?: RankedTransaction[]
 }
 
 export interface Transaction {
@@ -55,4 +55,21 @@ export interface TransactionRecord {
   transactions: Transaction[]
   metrics: Metrics
   createdAt: string
+}
+
+export interface DailySeries {
+  labels: string[]
+  out: number[] 
+  in?: number[]
+}
+
+export interface RollingSeries {
+  window: number
+  values: number[]
+}
+
+export interface RankedTransaction {
+  date: string
+  amount: number
+  description: string
 }

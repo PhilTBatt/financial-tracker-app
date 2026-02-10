@@ -10,11 +10,11 @@
                 Average Monthly Spend
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-icon lucide-calendar"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
             </p>
-            <p class="value" class="small-card-text">
+            <p class="small-card-text">
                 @let avg = metrics?.avgMonthlySpend;
 
                 {{avg != null ? '£' + (avg / 100) : ''}}
-                <span class="monthly-spend-side-text">
+                <span class="small-cards-side-text">
                     {{metrics?.dateRangeLabel}}
                 </span>
             </p>
@@ -25,7 +25,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scroll-icon lucide-scroll"><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></svg>
             </p>
 
-            <p class="value" class="small-card-text">
+            <p class="small-card-text">
                 {{metrics?.totalTransactions}}
             </p>
         </styled-card>
@@ -35,15 +35,16 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart-icon lucide-shopping-cart"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
             </p>
 
-            <p class="value" class="small-card-text">
+            <p class="small-card-text">
                   @let top = (metrics?.categories?.outTotalByCategory | keyvalue:descValue)?.[0];
                 {{ top?.key }}
-                <span class="monthly-spend-side-text">
+                <span class="small-cards-side-text">
                     £{{ (top?.value ?? 0) / 100 }} Total
                 </span>
             </p>
         </styled-card>
     </div>
+    
 
     <div class="big-cards-section">
         <div class="big-cards">
@@ -69,6 +70,69 @@
         <div class="big-cards">
             <styled-card class="big-card">
                 <p class="big-card-heading">
+                    Transactions Over Time
+                </p>
+                <div class="chart">
+                    @defer{<canvas baseChart [type]="scatterType" [data]="scatterData" [options]="scatterOptions"></canvas>}
+                </div>
+            </styled-card>
+
+            <styled-card class="big-card">
+                <p class="big-card-heading">
+                    Rolling 7-day average
+                </p>
+                <div class="chart">
+                    @defer{<canvas baseChart [type]="rollingType" [data]="rollingData" [options]="rollingOptions"></canvas>}
+                </div>
+            </styled-card>
+        </div>
+
+        <div class="small-cards small-cards-2">
+            <styled-card class="small-card">
+                <p class="small-card-heading">
+                    Average Monthly Spend
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-icon lucide-calendar"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+                </p>
+                <p class="small-card-text">
+                    @let a = metrics?.avgMonthlySpend;
+
+                    {{avg != null ? '£' + (avg / 100) : ''}}
+                    <span class="small-cards-side-text">
+                        {{metrics?.dateRangeLabel}}
+                    </span>
+                </p>
+            </styled-card>
+            <styled-card class="small-card">
+                <p class="small-card-heading">
+                    Total Transactions
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scroll-icon lucide-scroll"><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></svg>
+                </p>
+
+                <p class="small-card-text">
+                    {{metrics?.totalTransactions}}
+                </p>
+            </styled-card>
+            <styled-card class="small-card">
+                <p class="small-card-heading">
+                    Top Spending Category
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart-icon lucide-shopping-cart"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                </p>
+
+                <p class="small-card-text">
+                    @let t = (metrics?.categories?.outTotalByCategory | keyvalue:descValue)?.[0];
+                    {{ top?.key }}
+                    <span class="small-cards-side-text">
+                        £{{ (top?.value ?? 0) / 100 }} Total
+                    </span>
+                </p>
+            </styled-card>
+        </div>
+    </div>
+
+    <div class="big-cards-section">
+        <div class="big-cards">
+            <styled-card class="big-card">
+                <p class="big-card-heading">
                     Category Distribution
                 </p>
                 <div class="chart donut-chart">
@@ -78,10 +142,30 @@
 
             <styled-card class="big-card">
                 <p class="big-card-heading">
+                    Average Category Spend
+                </p>
+                <div class="chart monthy-cat-spend-chart">
+                    @defer{<canvas baseChart [type]="bubbleType" [data]="bubbleData" [options]="bubbleOptions"></canvas>}
+                </div>
+            </styled-card>
+        </div>
+
+        <div class="big-cards">
+            <styled-card class="big-card">
+                <p class="big-card-heading">
                     Monthly Spend Per Category
                 </p>
                 <div class="chart monthy-cat-spend-chart">
                     @defer{<canvas baseChart [type]="catStackType" [data]="catStackData" [options]="catStackOptions"></canvas>}
+                </div>
+            </styled-card>
+
+            <styled-card class="big-card">
+                <p class="big-card-heading">
+                    Spend Across The Month
+                </p>
+                <div class="chart monthy-cat-spend-chart">
+                    @defer{<canvas baseChart [type]="matrixType" [data]="matrixData" [options]="matrixOptions"></canvas>}
                 </div>
             </styled-card>
         </div>
