@@ -1,6 +1,7 @@
 import { HttpClient, HttpEventType, HttpResponse } from "@angular/common/http";
 import { Component, EventEmitter, inject, Output } from "@angular/core";
 import { firstValueFrom, Subscription } from "rxjs";
+import { environment } from "../../../environments/environment";
 
 @Component({
     selector: 'file-submit',
@@ -77,6 +78,8 @@ export class FileSubmit {
 
     async showExampleData() {
         if (this.uploadSub) return
+
+        if (!environment.production) return this.uploaded.emit('e5917b93-bee2-4571-ac7b-b168fb8d5b39')
         
         try {
             this.errorMsg = null

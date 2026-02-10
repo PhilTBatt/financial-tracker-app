@@ -101,13 +101,13 @@ export class DataSection {
     catStackType: "bar" = "bar"
     catStackData: ChartConfiguration<"bar">["data"] = { labels: [], datasets: [] }
     catStackOptions: ChartConfiguration<"bar">["options"] = {
-        plugins: { legend: { display: true, labels: { color: this.theme.text, boxWidth: 10 } } },
+        plugins: { legend: { display: true, labels: { color: this.theme.text } } },
         responsive: true,
         maintainAspectRatio: false,
         scales: {  
             x: { stacked: true, ticks: { maxTicksLimit: 6 } }, 
             y: { stacked: true, ticks: { maxTicksLimit: 6 }, grid: { color: this.theme.grid } }
-        }
+        },
     }
 
     weekdayType: "bar" = "bar";
@@ -240,13 +240,20 @@ export class DataSection {
         const byCat = monthly.byCategoryOut ?? {}
         const cats = Object.keys(byCat).sort()
 
+        const catsSorted = cats.map(cat => {
+            const total = (byCat[cat] ?? []).reduce((sum, p) => sum + (Number(p) || 0), 0)
+            return { cat, total }
+        })
+        .sort((a, b) => b.total - a.total)
+        .map(x => x.cat)
+
         this.catStackData = {
             labels,
-            datasets: cats.map((cat) => ({
+            datasets: catsSorted.map((cat) => ({
                 label: cat,
                 data: (byCat[cat] ?? []).map(p => (Number(p) || 0) / 100),
                 backgroundColor: this.categoryColors[cat] ?? this.theme.text,
-                borderRadius: 3
+                borderRadius: 0
             }))
         }
     }
@@ -281,7 +288,7 @@ export class DataSection {
 
         this.weekdayData = {
             labels: labels,
-            datasets: [{ data: avgOut.map(p => p / 100), backgroundColor: this.weekdayColors, borderRadius: 6, borderWidth: 0 }]
+            datasets: [{ data: avgOut.map(p => p / 100), backgroundColor: this.weekdayColors, borderRadius: 3}]
         }
     }
 
