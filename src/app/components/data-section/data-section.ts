@@ -4,7 +4,7 @@ import { StyledCard } from "../styled-card/styled-card";
 import { Metrics, Transaction, TransactionRecord } from "../../types/data-types";
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ScriptableContext } from "chart.js";
-import { KeyValuePipe } from "@angular/common";
+import { DecimalPipe, KeyValuePipe } from "@angular/common";
 import { Inject, PLATFORM_ID, OnInit } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import { Chart } from "chart.js";
@@ -12,7 +12,7 @@ import { Chart } from "chart.js";
 
 @Component({
     selector: 'data-section',
-    imports: [StyledCard, BaseChartDirective, KeyValuePipe],
+    imports: [StyledCard, BaseChartDirective, KeyValuePipe, DecimalPipe],
     templateUrl: './data-section.html',
     styleUrl: './data-section.scss'
 })
@@ -210,7 +210,7 @@ export class DataSection implements OnInit {
             }
         },
         scales: {
-            x: { type: 'linear', min: -0.5, max: 11.5, grid: { display: false },
+            x: { type: 'linear', min: -0.5, max: 6, grid: { display: false },
                 ticks: { 
                     stepSize: 1, 
                     color: this.theme.text,
@@ -610,4 +610,15 @@ export class DataSection implements OnInit {
         }
     }
 
+    get avgOutgoingTransaction(): number | null {
+        const totals = this.metrics?.categories?.outTotalByCategory
+        const counts = this.metrics?.categories?.outCountByCategory
+
+        if (!totals || !counts) return null
+
+        const totalOut = Object.values(totals).reduce((s, v) => s + v, 0)
+        const totalCount = Object.values(counts).reduce((s, v) => s + v, 0)
+
+        return totalCount ? totalOut / totalCount : null
+    }
 }
