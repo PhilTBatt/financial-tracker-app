@@ -49,18 +49,30 @@
     <div class="big-cards-section">
         <div class="big-cards">
             <styled-card class="big-card">
-                <p class="big-card-heading">
-                    Monthly Spend Over Time
-                </p>
+                <div class="big-card-heading">
+                    <p class="big-card-heading-text">
+                        Spend Over Time
+                    </p>
+                    <select class="chart-select" [(ngModel)]="lineMode" (change)="buildMonthlyOutLine()">
+                        <option value="monthly">Monthly</option>
+                        <option value="weekly">Weekly</option>
+                    </select>
+                </div>
                 <div class="chart montlhy-spend-chart">
                     @defer{<canvas baseChart [type]="lineType" [data]="lineData" [options]="lineOptions"></canvas>}
                 </div>
             </styled-card>
 
             <styled-card class="big-card">
-                <p class="big-card-heading">
-                    Monthly Spend/Income
-                </p>
+                <div class="big-card-heading">
+                    <p class="big-card-heading-text">
+                        Spend/Income Over Time
+                    </p>
+                    <select class="chart-select" [(ngModel)]="inOutMode" (change)="buildMonthlyInOutChart()">
+                        <option value="monthly">Monthly</option>
+                        <option value="weekly">Weekly</option>
+                    </select>                    
+                </div>
                 <div class="chart in-out-chart">
                     @defer{<canvas baseChart [type]="inOutType" [data]="inOutData" [options]="inOutOptions"></canvas>}
                 </div>
@@ -69,9 +81,16 @@
 
         <div class="big-cards">
             <styled-card class="big-card">
-                <p class="big-card-heading">
-                    Category Distribution
-                </p>
+                <div class="big-card-heading">
+                    <p class="big-card-heading-text">
+                        Category Distribution
+                    </p>
+                    <select class="chart-select" [(ngModel)]="donutMode" (change)="buildDonutChart()">
+                        <option value="total">Total</option>
+                        <option value="monthly">Monthly Avg</option>
+                        <option value="weekly">Weekly Avg</option>
+                    </select>  
+                </div>
                 <div class="chart donut-chart">
                     @defer{<canvas baseChart [type]="donutType" [data]="donutData" [options]="donutOptions"></canvas>}
                 </div>
@@ -79,7 +98,7 @@
 
             <styled-card class="big-card">
                 <p class="big-card-heading">
-                    Average Category Spend
+                    Category Spend
                 </p>
                 <div class="chart monthy-cat-spend-chart">
                     @defer{<canvas baseChart [type]="bubbleType" [data]="bubbleData" [options]="bubbleOptions"></canvas>}
@@ -89,9 +108,15 @@
 
         <div class="big-cards">
             <styled-card class="big-card">
-                <p class="big-card-heading">
-                    Monthly Spend Per Category
-                </p>
+                <div class="big-card-heading">
+                    <p class="big-card-heading-text">
+                        Spend Per Category
+                    </p>
+                    <select class="chart-select" [(ngModel)]="catStackMode" (change)="buildMonthlyCategoriesSpendChart()">
+                        <option value="monthly">Monthly</option>
+                        <option value="weekly">Weekly</option>
+                    </select>                    
+                </div>
                 <div class="chart monthy-cat-spend-chart">
                     @defer{<canvas baseChart [type]="catStackType" [data]="catStackData" [options]="catStackOptions"></canvas>}
                 </div>

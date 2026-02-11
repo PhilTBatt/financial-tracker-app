@@ -8,11 +8,12 @@ import { DecimalPipe, KeyValuePipe } from "@angular/common";
 import { Inject, PLATFORM_ID, OnInit } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import { Chart } from "chart.js";
+import { FormsModule } from "@angular/forms";
 
 
 @Component({
     selector: 'data-section',
-    imports: [StyledCard, BaseChartDirective, KeyValuePipe, DecimalPipe],
+    imports: [StyledCard, BaseChartDirective, KeyValuePipe, DecimalPipe, FormsModule],
     templateUrl: './data-section.html',
     styleUrl: './data-section.scss'
 })
@@ -27,6 +28,10 @@ export class DataSection implements OnInit {
     private loadAttempts = 0
     @Output() dataLoaded = new EventEmitter<void>()
     descValue = (a: any, b: any) => b.value - a.value
+    lineMode: "monthly" | "weekly" = "monthly"
+    inOutMode: "monthly" | "weekly" = "monthly"
+    donutMode: "total" | "monthly" | "weekly" = "total"
+    catStackMode: "monthly" | "weekly" = "monthly"
 
     private readonly theme = {
         text: "#94A3B8",
@@ -90,14 +95,20 @@ export class DataSection implements OnInit {
         maintainAspectRatio: false,
         scales: { 
             x: { stacked: false, ticks: { maxTicksLimit: 6 } },
-            y: { stacked: false, ticks: { maxTicksLimit: 6 }, grid: { color: this.theme.grid } } 
+            y: { stacked: false, ticks: { maxTicksLimit: 6 }, grid: { color: this.theme.grid } }
         }
     }
 
     donutType: "doughnut" = "doughnut"
     donutData: ChartConfiguration<"doughnut">["data"] = { labels: [], datasets: [] }
     donutOptions: ChartConfiguration<'doughnut'>['options'] = { 
-        plugins: { legend: { position: 'right', labels: { padding: 8, boxWidth: 10, boxHeight: 10, color: this.theme.text } } },
+        plugins: {
+            legend: { position: 'right', labels: { padding: 8, boxWidth: 10, boxHeight: 10, color: this.theme.text } },
+            tooltip: { callbacks: { label: context => {
+                const value = context.parsed
+                return `£${value.toFixed(2)}`
+            }}}
+        },
         layout: { padding: {  right: 0 } },
         maintainAspectRatio: false,
         cutout: '65%'
@@ -112,8 +123,8 @@ export class DataSection implements OnInit {
             legend: { display: false },
             tooltip: {
                 callbacks: { label: (ctx) => {
-                    const raw = ctx.raw as any;
-                    return `${raw._cat}: count ${raw.x}, avg £${raw.y.toFixed(2)}, total £${raw._total.toFixed(2)}`;
+                    const raw = ctx.raw as any
+                    return `${raw._cat}: Count ${raw.x}, Avg £${raw.y.toFixed(2)}, Total £${raw._total.toFixed(2)}`;
                 }}
             }
         },
@@ -237,7 +248,7 @@ export class DataSection implements OnInit {
         }
     }
 
-    public loadRecord(id: string) {
+    loadRecord(id: string) {
         this.http.get<TransactionRecord>(`${this.apiUrl}/${id}`).subscribe({
             next: data => {
                 this.recordId = data.id
@@ -271,19 +282,21 @@ export class DataSection implements OnInit {
         })
     }
 
-    private buildMonthlyOutLine() {
+    buildMonthlyOutLine() {
         const monthly = this.metrics?.monthly
         if (!monthly) {
             this.lineData = { labels: [], datasets: [] }
             return
         }
 
-        const labels = monthly.labels.map(ym => {
-            const [y, m] = ym.split('-').map(Number)
-            return new Date(y, (m ?? 1) - 1, 1).toLocaleString('en-GB', { month: 'short', year: '2-digit' })
-        })
+        const period = this.getPeriod(this.lineMode)
+        if (!period) {
+            this.lineData = { labels: [], datasets: [] }
+            return
+        }
 
-        const values = monthly.out.map(pennies => pennies / 100)
+        const labels = period.labels.map((l: string) => this.formatPeriodLabel(this.lineMode, String(l)))
+        const values = period.out.map((p: number) => p / 100)
 
         this.lineData = {
             labels,
@@ -294,38 +307,54 @@ export class DataSection implements OnInit {
         }
     }
 
-    private buildMonthlyInOutChart() {
-        const monthly = this.metrics?.monthly
-        if (!monthly) {
+    buildMonthlyInOutChart() {
+        const period = this.getPeriod(this.inOutMode)
+        if (!period) {
             this.inOutData = { labels: [], datasets: [] }
             return
         }
 
-        const labels = this.metrics?.monthly.labels.map(ym => {
-            const [y, m] = ym.split('-').map(Number)
-            return new Date(y, (m ?? 1) - 1, 1).toLocaleString('en-GB', { month: 'short', year: '2-digit' })
-        })
+        const labels = period.labels.map((l: string) => this.formatPeriodLabel(this.inOutMode, String(l)))
 
         this.inOutData = {
             labels,
             datasets: [ 
-                { label: "In", data: monthly.in.map((p) => p / 100), backgroundColor: "rgba(59,130,246,0.85)", borderRadius: 6 }, 
-                { label: "Out", data: monthly.out.map((p) => p / 100), backgroundColor: "rgba(245,158,11,0.75)", borderRadius: 6 } 
+                { label: "In", data: period.in.map((p: number) => p / 100), backgroundColor: "rgba(59,130,246,0.85)", borderRadius: 6 }, 
+                { label: "Out", data: period.out.map((p: number) => p / 100), backgroundColor: "rgba(245,158,11,0.75)", borderRadius: 6 } 
             ]
         }
     }
 
-    private buildDonutChart() {
-        const byCat = this.metrics?.monthly?.byCategoryOut ?? {}
+    buildDonutChart() {
+        let byCat: Record<string, number[]> = {}
 
-        const totalsByCat = Object.entries(byCat).map(([cat, arr]) => {
-            const totalPennies = (arr ?? []).reduce((sum, v) => sum + (Number(v) || 0), 0)
-            return [cat, totalPennies] as const
-        })
+        if (this.donutMode === "monthly") byCat = this.metrics?.monthly?.byCategoryOut ?? {} 
+        else if (this.donutMode === "weekly")   byCat = this.metrics?.weekly?.byCategoryOut ?? {}
+        else {
+            const monthly = this.metrics?.monthly?.byCategoryOut ?? {}
+            const totals: Record<string, number[]> = {}
+            for (const [cat, arr] of Object.entries(monthly)) totals[cat] = [(arr ?? []).reduce((s, v) => s + (Number(v) || 0), 0)]
+            byCat = totals
+        }
 
-        const entries = totalsByCat
-            .filter(([, pennies]) => pennies > 0)
-            .sort((a, b) => b[1] - a[1])
+        let totalsByCat: readonly [string, number][]
+
+        if (this.donutMode === "total") {
+            totalsByCat = Object.entries(byCat).map(([cat, arr]) => {
+                const total = (arr ?? []).reduce((sum, v) => sum + (Number(v) || 0), 0)
+                return [cat, total] as const
+            })
+        } else {
+            totalsByCat = Object.entries(byCat).map(([cat, arr]) => {
+                const values = (arr ?? []).map(v => Number(v) || 0)
+                const avg = values.length
+                ? values.reduce((s, v) => s + v, 0) / values.length
+                : 0
+                return [cat, avg] as const
+            })
+        }
+
+        const entries = totalsByCat.filter(([, pennies]) => pennies > 0).sort((a, b) => b[1] - a[1])
 
         const labels = entries.map(([cat]) => cat)
         const values = entries.map(([, pennies]) => pennies / 100)
@@ -337,7 +366,7 @@ export class DataSection implements OnInit {
         }
     }
 
-    private buildCategoryBubbleChart() {
+    buildCategoryBubbleChart() {
         const cats = this.metrics?.categories
         if (!cats) {
             this.bubbleData = { datasets: [] }
@@ -389,22 +418,19 @@ export class DataSection implements OnInit {
         }
     }
 
-    private buildMonthlyCategoriesSpendChart() {
-        const monthly = this.metrics?.monthly
-        if (!monthly) {
+    buildMonthlyCategoriesSpendChart() {
+        const period = this.getPeriod(this.catStackMode)
+        if (!period) {
             this.catStackData = { labels: [], datasets: [] }
             return
         }
-        const labels = this.metrics?.monthly.labels.map(ym => {
-            const [y, m] = ym.split('-').map(Number)
-            return new Date(y, (m ?? 1) - 1, 1).toLocaleString('en-GB', { month: 'short', year: '2-digit' })
-        })
 
-        const byCat = monthly.byCategoryOut ?? {}
+        const labels = period.labels.map((l: string) => this.formatPeriodLabel(this.catStackMode, String(l)))
+        const byCat = period.byCategoryOut ?? {}
         const cats = Object.keys(byCat).sort()
 
         const catsSorted = cats.map(cat => {
-            const total = (byCat[cat] ?? []).reduce((sum, p) => sum + (Number(p) || 0), 0)
+            const total = (byCat[cat] ?? []).reduce((sum: number, p: number) => sum + (Number(p) || 0), 0)
             return { cat, total }
         })
         .sort((a, b) => b.total - a.total)
@@ -412,16 +438,16 @@ export class DataSection implements OnInit {
 
         this.catStackData = {
             labels,
-            datasets: catsSorted.map((cat) => ({
+            datasets: catsSorted.map(cat => ({
                 label: cat,
-                data: (byCat[cat] ?? []).map(p => (Number(p) || 0) / 100),
+                data: (byCat[cat] ?? []).map((p: number) => (Number(p) || 0) / 100),
                 backgroundColor: this.categoryColors[cat] ?? this.theme.text,
                 borderWidth: 0.5
             }))
         }
     }
 
-    private buildSpendingByWeekdayChart() {
+    buildSpendingByWeekdayChart() {
         const labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
         const totalOut = Array(7).fill(0) as number[]
@@ -455,7 +481,7 @@ export class DataSection implements OnInit {
         }
     }
 
-    private buildSpendingBySizeChart() {
+    buildSpendingBySizeChart() {
         const labels = this.metrics?.buckets?.outgoingSize?.labels ?? []
         const counts = this.metrics?.buckets?.outgoingSize?.counts ?? []
 
@@ -469,7 +495,7 @@ export class DataSection implements OnInit {
         }
     }
 
-    private buildRollingLine() {
+    buildRollingLine() {
         const labels = this.metrics?.daily?.labels ?? []
         const rollingPennies = this.metrics?.rollingOut7d?.values ?? []
         
@@ -491,7 +517,7 @@ export class DataSection implements OnInit {
         }
     }
 
-    private buildInOutScatter() {
+    buildInOutScatter() {
         const txs = this.transactions ?? []
         if (!txs.length) {
             this.scatterData = { datasets: [] }
@@ -516,7 +542,7 @@ export class DataSection implements OnInit {
         }
     }
 
-    private buildMonthlySpendMatrix() {
+    buildMonthlySpendMatrix() {
         const daily = this.metrics?.daily
         if (!daily?.labels?.length || !daily?.out?.length) {
             this.matrixData = { datasets: [] }
@@ -620,5 +646,19 @@ export class DataSection implements OnInit {
         const totalCount = Object.values(counts).reduce((s, v) => s + v, 0)
 
         return totalCount ? totalOut / totalCount : null
+    }
+
+    private getPeriod(mode: "monthly" | "weekly") {
+        return mode === "weekly" ? (this.metrics as any)?.weekly : this.metrics?.monthly
+    }
+
+    private formatPeriodLabel(mode: "monthly" | "weekly", label: string) {
+        if (mode === "monthly") {
+            const [y, m] = label.split("-").map(Number)
+            return new Date(y, (m ?? 1) - 1, 1).toLocaleString("en-GB", { month: "short", year: "2-digit" })
+        }
+        const m = label.match(/^(\d{4})-W(\d{1,2})$/)
+        if (m) return `W${m[2].padStart(2, "0")} ${m[1].slice(2)}`
+        return label
     }
 }
