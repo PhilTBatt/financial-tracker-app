@@ -151,7 +151,7 @@ export class DataSection implements OnInit {
         responsive: true,
         maintainAspectRatio: false,
         scales: {  
-            x: { stacked: true, ticks: { maxTicksLimit: 6 }, offset: true }, 
+            x: { stacked: true, ticks: { maxTicksLimit: 6 } }, 
             y: { stacked: true, ticks: { maxTicksLimit: 6 }, grid: { color: this.theme.grid } }
         }
     }
@@ -328,8 +328,10 @@ export class DataSection implements OnInit {
         this.inOutData = {
             labels,
             datasets: [ 
-                { label: "In", data: period.in.map((p: number) => p / 100), backgroundColor: "rgba(59,130,246,0.85)", borderRadius: 6 }, 
-                { label: "Out", data: period.out.map((p: number) => p / 100), backgroundColor: "rgba(245,158,11,0.75)", borderRadius: 6 } 
+                { label: "In", data: period.in.map((p: number) => p / 100), 
+                    backgroundColor: "rgba(59,130,246,0.85)", borderRadius: 6 }, 
+                { label: "Out", data: period.out.map((p: number) => p / 100), 
+                    backgroundColor: "rgba(245,158,11,0.75)", borderRadius: 6 } 
             ]
         }
     }
@@ -371,7 +373,10 @@ export class DataSection implements OnInit {
 
         this.donutData = {
             labels,
-            datasets: [{ data: values, backgroundColor: colors, borderColor: "rgba(15,23,42,0.85)" }]
+            datasets: [{ data: values,
+                backgroundColor: colors,
+                borderColor: this.theme.title,
+                borderWidth: 1.5, }]
         }
     }
 
@@ -421,7 +426,7 @@ export class DataSection implements OnInit {
                     }
                 }),
                 backgroundColor: entries.map(e => this.categoryColors[e.cat] ?? this.theme.text),
-                borderColor: "rgba(15,23,42,0.85)",
+                borderColor: this.theme.title,
                 borderWidth: 1
             }]
         }
@@ -451,7 +456,8 @@ export class DataSection implements OnInit {
                 label: cat,
                 data: (byCat[cat] ?? []).map((p: number) => (Number(p) || 0) / 100),
                 backgroundColor: this.categoryColors[cat] ?? this.theme.text,
-                borderWidth: 0.5
+                borderColor: this.theme.title,
+                borderWidth: 1.25
             }))
         }
     }
@@ -595,7 +601,9 @@ export class DataSection implements OnInit {
                     const raw = ctx.raw as any
                     const y = Number(raw?.y ?? 0)
                     return y >= 0 ? this.theme.income : this.theme.spend
-                }
+                },
+                borderColor: this.theme.title,
+                borderWidth: 0.1,
             } ]
         }
     }
