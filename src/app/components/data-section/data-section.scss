@@ -36,8 +36,8 @@ svg {
 .small-card {
     display: flex;
     flex-direction: column;
-    padding: 0px 30px 0px 30px;
-    width: 285px
+    padding: 0px 25px 0px 30px;
+    width: 290px
 }
 
 .small-card-heading{
@@ -51,7 +51,7 @@ svg {
 
 .small-card-text{
     margin: 0px 0 18px 0;
-    font-size: 30px;
+    font-size: 25.8px;
     color: rgba(255, 255, 255, 1);
     align-self: flex-start;
     font-weight: 700;
@@ -68,8 +68,8 @@ svg {
 
 .small-cards-side-text {
     color: rgba(146, 160, 190, 0.75);
-    font-size: 12px;
-    margin: 0 0 0 15px;
+    font-size: 10px;
+    margin: 0 0 0 10px;
 }
 
 .big-cards-section{
@@ -121,4 +121,16 @@ svg {
 .chart {
     width: 510px;
     height: 250px
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }

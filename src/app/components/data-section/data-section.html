@@ -53,7 +53,8 @@
                     <p class="big-card-heading-text">
                         Spend Over Time
                     </p>
-                    <select class="chart-select" [(ngModel)]="lineMode" (change)="buildMonthlyOutLine()">
+                    <label for="line-mode" class="sr-only">Line chart grouping</label>
+                    <select id="line-mode" class="chart-select" [(ngModel)]="lineMode" (change)="buildMonthlyOutLine()">
                         <option value="monthly">Monthly</option>
                         <option value="weekly">Weekly</option>
                     </select>
@@ -68,7 +69,8 @@
                     <p class="big-card-heading-text">
                         Spend/Income Over Time
                     </p>
-                    <select class="chart-select" [(ngModel)]="inOutMode" (change)="buildMonthlyInOutChart()">
+                    <label for="in-out-mode" class="sr-only">In/Out chart grouping</label>
+                    <select id="in-out-mode" class="chart-select" [(ngModel)]="inOutMode" (change)="buildMonthlyInOutChart()">
                         <option value="monthly">Monthly</option>
                         <option value="weekly">Weekly</option>
                     </select>                    
@@ -83,9 +85,10 @@
             <styled-card class="big-card">
                 <div class="big-card-heading">
                     <p class="big-card-heading-text">
-                        Category Distribution
+                        Category Spend Distribution
                     </p>
-                    <select class="chart-select" [(ngModel)]="donutMode" (change)="buildDonutChart()">
+                    <label for="donut-mode" class="sr-only">Donut chart grouping</label>
+                    <select id="donut-mode" class="chart-select" [(ngModel)]="donutMode" (change)="buildDonutChart()">
                         <option value="total">Total</option>
                         <option value="monthly">Monthly Avg</option>
                         <option value="weekly">Weekly Avg</option>
@@ -112,7 +115,8 @@
                     <p class="big-card-heading-text">
                         Spend Per Category
                     </p>
-                    <select class="chart-select" [(ngModel)]="catStackMode" (change)="buildMonthlyCategoriesSpendChart()">
+                    <label for="categories-mode" class="sr-only">Categories chart grouping</label>
+                    <select id="categories-mode" class="chart-select" [(ngModel)]="catStackMode" (change)="buildMonthlyCategoriesSpendChart()">
                         <option value="monthly">Monthly</option>
                         <option value="weekly">Weekly</option>
                     </select>                    
@@ -127,7 +131,7 @@
                     Spend Across The Month
                 </p>
                 <div class="chart monthy-cat-spend-chart">
-                    @defer{<canvas baseChart [type]="matrixType" [data]="matrixData" [options]="matrixOptions"></canvas>}
+                    @defer{<canvas baseChart [type]="cumType" [data]="cumData" [options]="cumOptions"></canvas>}
                 </div>
             </styled-card>
         </div>
@@ -156,7 +160,7 @@
                 <p class="small-card-text">
                     @let transactions = metrics?.totalTransactions;
                     @let days = metrics?.daily?.labels?.length;
-                    {{ (transactions != null && days != null && days > 0) ? transactions / days : ''}}
+                    {{ (transactions != null && days != null && days > 0) ? (transactions / days).toFixed(2) : ''}}
                 </p>
             </styled-card>
             <styled-card class="small-card">

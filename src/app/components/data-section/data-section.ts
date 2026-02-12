@@ -32,6 +32,7 @@ export class DataSection implements OnInit {
     inOutMode: "monthly" | "weekly" = "monthly"
     donutMode: "total" | "monthly" | "weekly" = "total"
     catStackMode: "monthly" | "weekly" = "monthly"
+    cumMode: "monthly" | "weekly" = "monthly";
 
     private readonly theme = {
         text: "#94A3B8",
@@ -44,14 +45,16 @@ export class DataSection implements OnInit {
 
     private readonly categoryColors: Record<string, string> = {
         Transfers: "#BF2F2F",
-        Transport: "#2563EB",
+        Transport: "#002983",
         Groceries: "#16A34A",
-        Entertainment: "#7C3AED",
-        Cash: "#6B7B2A",
+        Entertainment: "#9d6cf2",
+        Cash: "#667f00",
         "Food/Drink": "#F59E0B",
         Gaming: "#4C1D95",
         "Online Shopping": "#0EA5E9",
-        Other: "#334155"  
+        Gambling: "#51001c",
+        Subscriptions: "#fffb00",
+        Other: "#334155"
     }
 
     private readonly weekdayColors = [
@@ -78,8 +81,11 @@ export class DataSection implements OnInit {
     lineType: 'line' = 'line'
     lineData: ChartConfiguration<"line">["data"] = { labels: [], datasets: [] }
     lineOptions: ChartConfiguration<'line'>['options'] = { 
-        plugins: { legend: { display: false } },
-        scales: { 
+        plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: context => `£${(context.parsed.y || 0).toFixed(2)}` } } 
+        },
+        scales: {
             x: { ticks: { maxTicksLimit: 6, color: this.theme.text } }, 
             y: { ticks: { maxTicksLimit: 6, color: this.theme.text }, grid: { color: this.theme.grid } } 
         },
@@ -90,7 +96,10 @@ export class DataSection implements OnInit {
     inOutType: "bar" = "bar"
     inOutData: ChartConfiguration<"bar">["data"] = { labels: [], datasets: [] }
     inOutOptions: ChartConfiguration<"bar">["options"] = {
-        plugins: { legend: { display: true } },
+        plugins: { 
+            legend: { display: true },
+            tooltip: { callbacks: { label: context => `£${(context.parsed.y || 0).toFixed(2)}` } } 
+        },
         responsive: true,
         maintainAspectRatio: false,
         scales: { 
@@ -104,10 +113,7 @@ export class DataSection implements OnInit {
     donutOptions: ChartConfiguration<'doughnut'>['options'] = { 
         plugins: {
             legend: { position: 'right', labels: { padding: 8, boxWidth: 10, boxHeight: 10, color: this.theme.text } },
-            tooltip: { callbacks: { label: context => {
-                const value = context.parsed
-                return `£${value.toFixed(2)}`
-            }}}
+            tooltip: { callbacks: { label: context => `£${context.parsed.toFixed(2)}` } }
         },
         layout: { padding: {  right: 0 } },
         maintainAspectRatio: false,
@@ -122,14 +128,14 @@ export class DataSection implements OnInit {
         plugins: {
             legend: { display: false },
             tooltip: {
-                callbacks: { label: (ctx) => {
-                    const raw = ctx.raw as any
-                    return `${raw._cat}: Count ${raw.x}, Avg £${raw.y.toFixed(2)}, Total £${raw._total.toFixed(2)}`;
+                callbacks: { label: context => {
+                    const raw = context.raw as any
+                    return `${raw._cat}: Count ${raw.x}, Avg £${(raw.y || 0).toFixed(2)}, Total £${(raw._total || 0).toFixed(2)}`
                 }}
             }
         },
         scales: {
-            x: { title: { display: true, text: 'Outgoing transaction count' }, ticks: { color: this.theme.text }, grid: { color: this.theme.grid } },
+            x: { title: { display: true, text: 'Outgoing transaction count' }, ticks: { color: this.theme.text } },
             y: { title: { display: true, text: 'Avg outgoing transaction (£)' }, ticks: { color: this.theme.text }, grid: { color: this.theme.grid } }
         }
     }
@@ -137,19 +143,48 @@ export class DataSection implements OnInit {
     catStackType: "bar" = "bar"
     catStackData: ChartConfiguration<"bar">["data"] = { labels: [], datasets: [] }
     catStackOptions: ChartConfiguration<"bar">["options"] = {
-        plugins: { legend: { display: true, labels: { color: this.theme.text } } },
+        plugins: {
+            legend: { display: false,
+                labels: { color: this.theme.text, boxWidth: 10, boxHeight: 10 } 
+            },
+            tooltip: { callbacks: { label: context => `£${(context.parsed.y || 0).toFixed(2)}` } } },
         responsive: true,
         maintainAspectRatio: false,
         scales: {  
-            x: { stacked: true, ticks: { maxTicksLimit: 6 } }, 
+            x: { stacked: true, ticks: { maxTicksLimit: 6 }, offset: true }, 
             y: { stacked: true, ticks: { maxTicksLimit: 6 }, grid: { color: this.theme.grid } }
+        }
+    }
+
+    cumType: "line" = "line";
+    cumData: ChartConfiguration<"line">["data"] = { labels: [], datasets: [] }
+    cumOptions: ChartConfiguration<"line">["options"] = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false,
+                labels: { color: this.theme.text, boxWidth: 10, boxHeight: 10 }
+            },
+            tooltip: {
+                callbacks: {
+                    label: (ctx) => `£${Number(ctx.parsed.y || 0).toFixed(2)}`
+                }
+            }
+        },
+        scales: {
+            x: { ticks: { color: this.theme.text, maxTicksLimit: 8 }, grid: { display: false } },
+            y: { ticks: { color: this.theme.text, maxTicksLimit: 6 }, grid: { color: this.theme.grid } }
         }
     }
 
     weekdayType: "bar" = "bar";
     weekdayData: ChartConfiguration<"bar">["data"] = { labels: [], datasets: [] }
     weekdayOptions: ChartConfiguration<"bar">["options"] = {
-        plugins: { legend: { display: false } },
+        plugins: { 
+            legend: { display: false },
+            tooltip: { callbacks: { label: context => `£${(context.parsed.y || 0).toFixed(2)}` } }
+        },
         responsive: true,
         maintainAspectRatio: false,
         scales: { x: {}, y: { ticks: { maxTicksLimit: 6 }, grid: { color: this.theme.grid } } },
@@ -158,7 +193,10 @@ export class DataSection implements OnInit {
     sizeType: "bar" = "bar";
     sizeData: ChartConfiguration<"bar">["data"] = { labels: [], datasets: [] }
     sizeOptions: ChartConfiguration<"bar">["options"] = {
-        plugins: { legend: { display: false } },
+        plugins: { 
+            legend: { display: false },
+            tooltip: { callbacks: { label: context => `${context.parsed.y} Transactions` } } 
+        },
         responsive: true,
         maintainAspectRatio: false,
         scales: { x: {}, y: { ticks: { maxTicksLimit: 6 }, grid: { color: this.theme.grid } } },
@@ -170,7 +208,10 @@ export class DataSection implements OnInit {
     rollingOptions: ChartConfiguration<'line'>['options'] = {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
+        plugins: { 
+            legend: { display: false },
+            tooltip: { callbacks: { label: context => `£${(context.parsed.y || 0).toFixed(2)}` } }
+        },
         scales: { x: { ticks: { maxTicksLimit: 8 } }, y: { ticks: { maxTicksLimit: 6 } } }
     }
 
@@ -184,11 +225,12 @@ export class DataSection implements OnInit {
             legend: { display: false },
             tooltip: {
                 callbacks: {
-                    label: (ctx) => {
-                        const p = ctx.raw as any
+                    label: context => {
+                        const p = context.raw as any
+                        const date = new Date(p.x).toLocaleDateString('en-GB')
                         const val = Number(p.y)
                         const sign = val < 0 ? '-' : '';
-                        return `${sign}£${Math.abs(val).toFixed(2)} — ${p._d ?? ''}`
+                        return `${sign}£${Math.abs(val).toFixed(2)} - ${date ?? ''}`
                     }
                 }
             }
@@ -196,39 +238,6 @@ export class DataSection implements OnInit {
         scales: {
             x: { type: 'time', time: { unit: 'day' }, ticks: { maxTicksLimit: 8 } },
             y: { ticks: { maxTicksLimit: 6 } }
-        }
-    }
-
-    matrixType: "matrix" = "matrix"
-    matrixData: ChartConfiguration<"matrix">["data"] = { datasets: [] }
-    matrixOptions: ChartConfiguration<'matrix'>['options'] = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                callbacks: {
-                    title: (items) => {
-                        const raw = items[0]?.raw as any
-                        return raw?._label ?? ''
-                    },
-                    label: (ctx) => {
-                        const raw = ctx.raw as any
-                        const v = Number(raw?.v ?? 0)
-                        return `£${v.toFixed(2)}`
-                    }
-                }
-            }
-        },
-        scales: {
-            x: { type: 'linear', min: -0.5, max: 6, grid: { display: false },
-                ticks: { 
-                    stepSize: 1, 
-                    color: this.theme.text,
-                    callback: v => ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"][Number(v)] ?? "" } },
-            y: { type: 'linear', offset: true, grid: { display: false },
-                ticks: { stepSize: 1, callback: v => String(Math.trunc(Number(v))) }
-            }
         }
     }
 
@@ -265,7 +274,7 @@ export class DataSection implements OnInit {
                 this.buildCategoryBubbleChart()
                 this.buildRollingLine()
                 this.buildInOutScatter()
-                this.buildMonthlySpendMatrix()
+                this.buildCumulativeCategorySpend() 
                 this.dataLoaded.emit()
             },
             error: err => {
@@ -362,7 +371,7 @@ export class DataSection implements OnInit {
 
         this.donutData = {
             labels,
-            datasets: [{ data: values, backgroundColor: colors, borderWidth: 0.5, borderColor: "rgba(15,23,42,0.85)" }]
+            datasets: [{ data: values, backgroundColor: colors, borderColor: "rgba(15,23,42,0.85)" }]
         }
     }
 
@@ -447,6 +456,51 @@ export class DataSection implements OnInit {
         }
     }
 
+    buildCumulativeCategorySpend() {
+        const period = this.getPeriod(this.cumMode)
+        if (!period) {
+            this.catStackData = { labels: [], datasets: [] }
+            return
+        }
+
+        const labels = period.labels.map((l: string) => this.formatPeriodLabel(this.cumMode, String(l)))
+        const byCat = period.byCategoryOut ?? {}
+        const cats = Object.keys(byCat).sort()
+
+        const catsSorted = Object.keys(byCat)
+            .map(cat => ({
+                cat,
+                total: (byCat[cat] ?? []).reduce((s: any, v: any) => s + (Number(v) || 0), 0)
+            }))
+            .filter(x => x.total > 0)
+            .sort((a, b) => b.total - a.total)
+            .map(x => x.cat)
+
+        this.cumData = {
+            labels,
+            datasets: catsSorted.map(cat => {
+                const arr = byCat[cat].map((v: any) => Number(v) || 0)
+                let running = 0;
+                const cumulative = arr.map((p: any) => {
+                    running += p
+                    return running / 100
+                })
+                const color = this.categoryColors[cat] ?? this.theme.text
+                return {
+                    label: cat,
+                    data: cumulative,
+                    borderColor: color,
+                    backgroundColor: color,
+                    borderWidth: 2,
+                    tension: 0.25,
+                    fill: false,
+                    pointRadius: 0,
+                    pointHoverRadius: 3
+                }
+            })
+        }
+    }
+
     buildSpendingByWeekdayChart() {
         const labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
@@ -506,7 +560,7 @@ export class DataSection implements OnInit {
         this.rollingData = {
             labels: labels,
             datasets: [ {
-                label: 'Rolling 7-day avg (£)',
+                label: 'Rolling 7-day Avg',
                 data: rollingPennies.map(v => (Number(v) || 0) / 100),
                 tension: 0.35,
                 pointRadius: 0,
@@ -537,100 +591,10 @@ export class DataSection implements OnInit {
                 data: points,
                 parsing: false,
                 pointRadius: 3,
-                backgroundColor: "rgba(148,163,184,0.55)"
-            } ]
-        }
-    }
-
-    buildMonthlySpendMatrix() {
-        const daily = this.metrics?.daily
-        if (!daily?.labels?.length || !daily?.out?.length) {
-            this.matrixData = { datasets: [] }
-            return
-        }
-
-        type Cell = { x: number; y: number; v: number; d: string }
-
-        const lastLabel = String(daily.labels[daily.labels.length - 1] ?? "")
-        const lastDate = new Date(lastLabel)
-        if (Number.isNaN(lastDate.getTime())) {
-            this.matrixData = { datasets: [] }
-            return
-        }
-
-        const year = lastDate.getFullYear()
-        const month = lastDate.getMonth()
-
-        const firstOfMonth = new Date(year, month, 1)
-        const daysInMonth = new Date(year, month + 1, 0).getDate()
-
-        const jsDayFirst = firstOfMonth.getDay()
-        const firstWeekdayMon0 = (jsDayFirst + 6) % 7
-        const rows = Math.ceil((firstWeekdayMon0 + daysInMonth) / 7)
-
-        const outByDate = new Map<string, number>()
-        for (let i = 0; i < daily.labels.length; i++) {
-            const d = String(daily.labels[i] ?? "")
-            const outPennies = Number(daily.out[i] ?? 0)
-            outByDate.set(d, outPennies / 100)
-        }
-
-        const cells: Cell[] = []
-        for (let day = 1; day <= daysInMonth; day++) {
-            const dt = new Date(year, month, day)
-            const iso = dt.toISOString().slice(0, 10)
-            const v = Number(outByDate.get(iso) ?? 0)
-
-            const jsDay = dt.getDay()
-            const weekdayMon0 = (jsDay + 6) % 7
-
-            const indexFromGridStart = firstWeekdayMon0 + (day - 1)
-            const weekRow = Math.floor(indexFromGridStart / 7)
-
-            cells.push({ x: weekdayMon0, y: weekRow, v, d: iso })
-        }
-
-        const maxV = Math.max(...cells.map(p => p.v))
-
-        this.matrixOptions = {
-            ...this.matrixOptions,
-            scales: {
-                ...this.matrixOptions?.scales,
-                y: {
-                    type: "linear",
-                    min: -0.5,
-                    max: (rows - 1) + 0.5,
-                    grid: { display: false },
-                    ticks: { display: false }
-                }
-            }
-        }
-
-        this.matrixData = {
-            datasets: [
-            {
-                label: "Monthly spend (£)",
-                data: cells,
-                parsing: false,
-                borderWidth: 1,
-                borderColor: "rgba(15,23,42,0.85)",
                 backgroundColor: (ctx) => {
-                    const raw = ctx.raw
-                    if (!raw || typeof raw !== "object") return "rgba(148,163,184,0.10)"
-                    const r = raw as { v?: number }
-                    const v = Number(r.v ?? 0)
-                    if (!maxV || v <= 0) return "rgba(148,163,184,0.10)"
-                    const t = Math.min(1, Math.max(0, v / maxV))
-                    const a = 0.12 + 0.78 * Math.sqrt(t)
-                    return `rgba(245,158,11,${a})`
-                },
-                width: (ctx) => {
-                    const area = ctx.chart.chartArea
-                    return area ? Math.floor(area.width / 7) - 2 : 20
-                },
-                height: (ctx) => {
-                    const area = ctx.chart.chartArea
-                    return area ? Math.max(10, Math.floor(area.height / rows) - 2) : 14
+                    const raw = ctx.raw as any
+                    const y = Number(raw?.y ?? 0)
+                    return y >= 0 ? this.theme.income : this.theme.spend
                 }
             } ]
         }
