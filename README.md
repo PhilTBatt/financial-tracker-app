@@ -11,14 +11,17 @@ This frontend is part of a full-stack application, alongside:
 
 ---
 
-| Home Section | Data Section |
-|---|---|
-| ![Home](./screenshots/home-page.png) | ![Info](./screenshots/data-section.png) |
+| | |
+|-|-|
+| ![Home](./screenshots/home-page.png) | ![Info](./screenshots/data-section-1.png) |
+| ![Home](./screenshots/data-section-2.png) | ![Info](./screenshots/data-section-3.5.png) |
 
 ## Tech Stack
 
 - Angular
 - TypeScript
+- Chart.js
+- ng2-charts
 - HTML / CSS
 - GitHub Pages
 
