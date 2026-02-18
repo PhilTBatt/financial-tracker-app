@@ -147,7 +147,7 @@ export class DataSection implements OnInit {
             legend: { display: false,
                 labels: { color: this.theme.text, boxWidth: 10, boxHeight: 10 } 
             },
-            tooltip: { callbacks: { label: context => `£${(context.parsed.y || 0).toFixed(2)}` } } },
+            tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: £${Number(ctx.parsed.y ?? 0).toFixed(2)}` } } },
         responsive: true,
         maintainAspectRatio: false,
         scales: {  
