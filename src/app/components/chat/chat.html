@@ -1,0 +1,23 @@
+<div class="chat-container">
+  <div class="messages" #messageList>
+    @for (msg of messages; track msg) {
+        <div [class]="'message ' + msg.role">
+            {{ msg.text }}
+        </div>
+    }
+    
+    @if (loading) {
+        <div class="message assistant thinking">
+            <span></span><span></span><span></span>
+        </div>
+    }
+  </div>
+
+  <div class="input-row">
+    <input [(ngModel)]="input" (keydown)="onEnter($event)" placeholder="Ask about your spending..." [disabled]="loading" />
+
+    <button (click)="send()" [disabled]="loading">
+        Send
+    </button>
+  </div>
+</div>

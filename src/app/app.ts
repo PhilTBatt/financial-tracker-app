@@ -7,10 +7,11 @@ import { SystemArchitecture } from "./components/system-architecture/system-arch
 import { Footer } from './components/footer/footer';
 import 'chartjs-adapter-date-fns';
 import './chart.config'
+import { Chat } from "./components/chat/chat";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, SystemArchitecture, DataSection, UploadSection, Footer],
+  imports: [RouterOutlet, Header, SystemArchitecture, DataSection, UploadSection, Footer, Chat],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

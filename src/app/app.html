@@ -122,6 +122,8 @@
   <upload-section (uploaded)="loadRecord($event)" (uploadStarted)="startUploadAnimation()"/>
 
   <data-section [class.hidden]="!showData" (dataLoaded)="onDataLoaded()"/>
+
+  <app-chat [class.hidden]="!showData"/>
 </main>
 
 <router-outlet />

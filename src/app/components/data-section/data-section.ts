@@ -236,7 +236,7 @@ export class DataSection implements OnInit {
             }
         },
         scales: {
-            x: { type: 'time', time: { unit: 'day' }, ticks: { maxTicksLimit: 8 } },
+            x: { type: 'time', time: { unit: 'day',displayFormats: { month: 'MMM yy', day: 'MMM yy' } }, ticks: { maxTicksLimit: 8 } },
             y: { ticks: { maxTicksLimit: 6 } }
         }
     }
@@ -471,7 +471,6 @@ export class DataSection implements OnInit {
 
         const labels = period.labels.map((l: string) => this.formatPeriodLabel(this.cumMode, String(l)))
         const byCat = period.byCategoryOut ?? {}
-        const cats = Object.keys(byCat).sort()
 
         const catsSorted = Object.keys(byCat)
             .map(cat => ({
@@ -564,7 +563,7 @@ export class DataSection implements OnInit {
             return
         }
         this.rollingData = {
-            labels: labels,
+            labels: labels.map(l => new Date(l).toLocaleString("en-GB", { month: "short", year: "2-digit" })),
             datasets: [ {
                 label: 'Rolling 7-day Avg',
                 data: rollingPennies.map(v => (Number(v) || 0) / 100),
